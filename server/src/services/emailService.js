@@ -26,7 +26,7 @@ const wrap = (title, bodyHtml) => `
       <table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:20px;overflow:hidden;box-shadow:0 4px 24px rgba(0,51,69,0.08);">
         <tr>
           <td style="background:#003345;padding:28px 40px;">
-            <p style="margin:0;font-size:22px;font-weight:900;color:#ffffff;letter-spacing:-0.5px;">Precision Vault</p>
+            <p style="margin:0;font-size:22px;font-weight:900;color:#ffffff;letter-spacing:-0.5px;">Fimberse</p>
             <p style="margin:4px 0 0;font-size:10px;font-weight:700;color:rgba(255,255,255,0.55);letter-spacing:3px;text-transform:uppercase;">Enterprise Reimbursement</p>
           </td>
         </tr>
@@ -34,7 +34,7 @@ const wrap = (title, bodyHtml) => `
         <tr>
           <td style="background:#f3faff;padding:20px 40px;border-top:1px solid #e6f0f5;">
             <p style="margin:0;font-size:12px;color:#40484c;opacity:0.5;text-align:center;">
-              This is an automated notification from Precision Vault. Please do not reply to this email.
+              This is an automated notification from Fimberse. Please do not reply to this email.
             </p>
           </td>
         </tr>
@@ -57,7 +57,7 @@ const claimTable = (expense) => `
   <table width="100%" cellpadding="0" cellspacing="0" style="margin:20px 0;background:#f3faff;border-radius:12px;padding:4px 20px;">
     ${claimRow('Category', expense.category || 'Uncategorized')}
     ${claimRow('Amount', `${expense.currency || '$'} ${parseFloat(expense.amount).toFixed(2)}`)}
-    ${claimRow('Date', new Date(expense.date || expense.created_at).toLocaleDateString('en-GB', { year:'numeric',month:'long',day:'numeric' }))}
+    ${claimRow('Date', new Date(expense.date || expense.created_at).toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' }))}
     ${expense.description ? claimRow('Description', expense.description) : ''}
   </table>`;
 
@@ -72,7 +72,7 @@ const send = async (to, subject, html) => {
   }
   try {
     await transporter.sendMail({
-      from: `"Precision Vault" <${process.env.SMTP_USER}>`,
+      from: `"Fimberse" <${process.env.SMTP_USER}>`,
       to,
       subject,
       html,
@@ -219,7 +219,7 @@ const emailService = {
         </div>
       </div>
       <p style="font-size:13px;color:#40484c;opacity:0.7;text-align:center;">Do not share this OTP with anyone. If you didn't request this, you can safely ignore this email.</p>`;
-    await send(user.email, `Your Precision Vault OTP: ${otp}`, wrap('Password Reset OTP', body));
+    await send(user.email, `Your Fimberse OTP: ${otp}`, wrap('Password Reset OTP', body));
   },
 };
 
