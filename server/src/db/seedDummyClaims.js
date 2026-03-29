@@ -1,21 +1,9 @@
-const path = require('path');
-require('dotenv').config({ path: path.join(__dirname, '../../.env') });
-const { Pool } = require('pg');
-
-const pool = new Pool({
-  user: process.env.DB_USER,
-  host: process.env.DB_HOST,
-  database: process.env.DB_NAME,
-  password: process.env.DB_PASSWORD,
-  port: process.env.DB_PORT,
-});
+const db = require('../config/db');
 
 async function seedClaims() {
-  const client = await pool.connect();
+  const client = await db.pool.connect();
   try {
     console.log('Connecting to database...');
-    
-    // Find an employee to assign claims to
     const resUser = await client.query("SELECT id, company_id FROM users WHERE role = 'EMPLOYEE' LIMIT 1");
     if (resUser.rows.length === 0) {
       console.log('Error: No users with role EMPLOYEE found. Please create an employee first.');
@@ -78,7 +66,7 @@ async function seedClaims() {
     console.error('Error seeding claims:', err);
   } finally {
     client.release();
-    pool.end();
+    db.pool.end();
   }
 }
 

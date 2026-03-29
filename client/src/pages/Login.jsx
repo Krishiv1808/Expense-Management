@@ -2,7 +2,7 @@ import React, { useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { motion } from 'framer-motion';
-import { Mail, Lock, Loader2 } from 'lucide-react';
+import { Mail, Lock, Loader2, ArrowLeft, KeyRound } from 'lucide-react';
 import { Button } from '../components/Button';
 import { Card } from '../components/UI';
 import { AuthContext } from '../context/AuthContext';
@@ -16,6 +16,10 @@ export default function Login() {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [showForgot, setShowForgot] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState('');
+  const [forgotSent, setForgotSent] = useState(false);
+  const [forgotLoading, setForgotLoading] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -44,68 +48,104 @@ export default function Login() {
     }
   };
 
-  return (
-    <div className="min-h-screen flex items-center justify-center p-6 bg-surface">
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-md"
+  const handleForgotSubmit = async (e) => {
+    e.preventDefault();
+    setForgotLoading(true);
+    // Simulate sending reset email (no backend endpoint yet)
+    await new Promise(res => setTimeout(res, 1200));
+    setForgotLoading(false);
+    setForgotSent(true);
+  };
+
+
+  // Forgot Password Modal
+  const ForgotModal = showForgot ? (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl relative"
       >
-        <div className="text-center mb-8">
-          <h2 className="text-3xl font-black text-primary font-headline">Welcome Back</h2>
-          <p className="text-on-surface-variant font-medium mt-2">Access your financial dashboard</p>
-        </div>
-
-        <Card variant="white" className="p-8 shadow-xl" hover={false}>
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {error && (
-              <div className="p-3 bg-error-container text-error text-sm font-bold rounded-xl text-center">
-                {error}
+        <button onClick={() => setShowForgot(false)} className="absolute top-5 right-5 text-gray-400 hover:text-gray-600">✕</button>
+        {!forgotSent ? (
+          <>
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-full bg-[#003345]/10 flex items-center justify-center text-[#003345]">
+                <KeyRound className="w-5 h-5" />
               </div>
-            )}
-            
-            <div className="space-y-1">
-              <label className="text-xs font-bold uppercase tracking-widest text-on-surface-variant/60 ml-1">Email Address</label>
-              <div className="relative">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant/40" />
-                <input 
-                  type="email" 
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  placeholder="john@company.com" 
-                  className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-medium"
-                  required
-                />
-              </div>
+              <h2 className="text-xl font-bold text-[#003345]">Reset Password</h2>
             </div>
-
-            <div className="space-y-1">
-              <label className="text-xs font-bold uppercase tracking-widest text-on-surface-variant/60 ml-1">Password</label>
+            <p className="text-sm text-[#40484c]/70 mb-6 font-medium">Enter your email and we'll send a reset link.</p>
+            <form onSubmit={handleForgotSubmit} className="space-y-4">
               <div className="relative">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant/40" />
-                <input 
-                  type="password" 
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  placeholder="••••••••" 
-                  className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-medium"
-                  required
-                />
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#40484c]/40" />
+                <input type="email" value={forgotEmail} onChange={(e) => setForgotEmail(e.target.value)} placeholder="john@company.com" className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:ring-2 focus:ring-[#003345]/20 outline-none font-medium" required />
               </div>
+              <button type="submit" disabled={forgotLoading} className="w-full py-3 bg-[#003345] hover:bg-[#004b63] text-white rounded-xl font-bold transition-colors flex items-center justify-center gap-2">
+                {forgotLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Send Reset Link'}
+              </button>
+              <button type="button" onClick={() => setShowForgot(false)} className="w-full py-3 border border-gray-200 text-[#40484c]/70 hover:text-[#003345] rounded-xl font-bold flex items-center justify-center gap-2">
+                <ArrowLeft className="w-4 h-4" /> Back to Login
+              </button>
+            </form>
+          </>
+        ) : (
+          <div className="text-center py-4">
+            <div className="w-16 h-16 rounded-full bg-green-50 flex items-center justify-center mx-auto mb-4">
+              <Mail className="w-8 h-8 text-green-600" />
             </div>
-
-            <Button className="w-full py-4 mt-4" type="submit">
-              {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Log In'}
-            </Button>
-          </form>
-
-          <p className="text-center text-sm font-medium mt-6 text-on-surface-variant/60">
-            Don't have an account? <Link to="/signup" className="text-primary font-bold hover:underline">Sign up</Link>
-          </p>
-        </Card>
+            <h3 className="text-xl font-bold text-[#003345] mb-2">Check your inbox</h3>
+            <p className="text-sm text-[#40484c]/70 font-medium mb-6">If an account exists for <span className="font-bold text-[#003345]">{forgotEmail}</span>, a reset link has been sent.</p>
+            <button onClick={() => setShowForgot(false)} className="w-full py-3 bg-[#003345] hover:bg-[#004b63] text-white rounded-xl font-bold flex items-center justify-center gap-2">
+              <ArrowLeft className="w-4 h-4" /> Back to Login
+            </button>
+          </div>
+        )}
       </motion.div>
     </div>
+  ) : null;
+
+  return (
+    <>
+      <div className="min-h-screen flex items-center justify-center p-6 bg-surface">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-md">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-black text-primary font-headline">Welcome Back</h2>
+            <p className="text-on-surface-variant font-medium mt-2">Access your financial dashboard</p>
+          </div>
+          <Card variant="white" className="p-8 shadow-xl" hover={false}>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {error && (
+                <div className="p-3 bg-error-container text-error text-sm font-bold rounded-xl text-center">{error}</div>
+              )}
+              <div className="space-y-1">
+                <label className="text-xs font-bold uppercase tracking-widest text-on-surface-variant/60 ml-1">Email Address</label>
+                <div className="relative">
+                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant/40" />
+                  <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder="john@company.com" className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-medium" required />
+                </div>
+              </div>
+              <div className="space-y-1">
+                <div className="flex items-center justify-between ml-1">
+                  <label className="text-xs font-bold uppercase tracking-widest text-on-surface-variant/60">Password</label>
+                  <button type="button" onClick={() => { setShowForgot(true); setForgotSent(false); setForgotEmail(formData.email); }} className="text-xs font-bold text-primary hover:underline">Forgot password?</button>
+                </div>
+                <div className="relative">
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant/40" />
+                  <input type="password" name="password" value={formData.password} onChange={handleChange} placeholder="••••••••" className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-medium" required />
+                </div>
+              </div>
+              <Button className="w-full py-4 mt-4" type="submit">
+                {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Log In'}
+              </Button>
+            </form>
+            <p className="text-center text-sm font-medium mt-6 text-on-surface-variant/60">
+              Don't have an account? <Link to="/signup" className="text-primary font-bold hover:underline">Sign up</Link>
+            </p>
+          </Card>
+        </motion.div>
+      </div>
+      {ForgotModal}
+    </>
   );
 }

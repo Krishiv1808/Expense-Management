@@ -15,4 +15,8 @@ router.get('/', authMiddleware, userController.getCompanyUsers);
 // @desc    Admin updates a user's role
 router.patch('/:id/role', authMiddleware, isAdmin, userController.updateRole);
 
+// @route   DELETE /api/users/:id
+// @desc    Admin removes a user
+router.delete('/:id', authMiddleware, isAdmin, userController.deleteUser);
+
 module.exports = router;

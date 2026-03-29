@@ -71,6 +71,24 @@ const userController = {
       console.error(err.message);
       res.status(500).json({ message: 'Server error updating role' });
     }
+  },
+
+  // @route   DELETE /api/users/:id
+  // @desc    Admin deletes a user
+  deleteUser: async (req, res) => {
+    const { id } = req.params;
+    const companyId = req.user.companyId;
+
+    try {
+      const result = await db.query(userQueries.deleteUser, [id, companyId]);
+      if (result.rows.length === 0) {
+        return res.status(404).json({ message: 'User not found or not in your company' });
+      }
+      res.json({ message: 'User deleted successfully', user: result.rows[0] });
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).json({ message: 'Server error deleting user' });
+    }
   }
 };
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
 import { Button } from '../components/Button';
@@ -6,7 +6,7 @@ import {
   Users, Loader2, UserPlus, ShieldCheck, 
   TrendingUp, Building2, ShieldAlert,
   Archive, FileCode, CheckCircle2,
-  MoreVertical, ChevronLeft, ChevronRight, X
+  MoreVertical, ChevronLeft, ChevronRight, X, Trash2, Edit2
 } from 'lucide-react';
 
 // Modal Component for Create User
@@ -81,6 +81,98 @@ const CreateUserModal = ({
   );
 };
 
+// Change Role Modal
+const ChangeRoleModal = ({ isOpen, onClose, targetUser, onConfirm, loading }) => {
+  const [newRole, setNewRole] = useState(targetUser?.role || 'EMPLOYEE');
+  
+  useEffect(() => {
+    if (targetUser) setNewRole(targetUser.role);
+  }, [targetUser]);
+
+  if (!isOpen || !targetUser) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+      <div className="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl relative">
+        <button onClick={onClose} className="absolute top-6 right-6 text-gray-400 hover:text-gray-600">
+          <X className="w-6 h-6" />
+        </button>
+        <div className="flex items-center gap-3 mb-6 border-b pb-4">
+          <div className="w-10 h-10 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-700">
+            <Edit2 className="w-5 h-5" />
+          </div>
+          <h2 className="text-xl font-bold text-[#003345]">Change Role</h2>
+        </div>
+        <p className="text-sm text-[#40484c]/70 mb-4 font-medium">
+          Changing role for <span className="font-bold text-[#003345]">{targetUser.name}</span>
+        </p>
+        <select
+          value={newRole}
+          onChange={(e) => setNewRole(e.target.value)}
+          className="w-full p-3 rounded-xl border border-gray-200 focus:border-[#003345] outline-none bg-white font-semibold mb-6"
+        >
+          <option value="EMPLOYEE">Employee</option>
+          <option value="MANAGER">Manager</option>
+          <option value="FINANCE">Finance Officer</option>
+          <option value="DIRECTOR">Director</option>
+          <option value="ADMIN">System Admin</option>
+        </select>
+        <div className="flex gap-3">
+          <Button type="button" variant="outline" onClick={onClose} className="flex-1 py-3 border-gray-200">Cancel</Button>
+          <Button type="button" onClick={() => onConfirm(newRole)} disabled={loading} className="flex-1 py-3 bg-[#003345] text-white hover:bg-[#004b63]">
+            {loading ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : 'Update Role'}
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Confirm Delete Modal
+const ConfirmDeleteModal = ({ isOpen, onClose, targetUser, onConfirm, loading }) => {
+  if (!isOpen || !targetUser) return null;
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+      <div className="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl relative">
+        <button onClick={onClose} className="absolute top-6 right-6 text-gray-400 hover:text-gray-600">
+          <X className="w-6 h-6" />
+        </button>
+        <div className="flex items-center gap-3 mb-6 border-b pb-4">
+          <div className="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center text-red-600">
+            <Trash2 className="w-5 h-5" />
+          </div>
+          <h2 className="text-xl font-bold text-[#003345]">Remove User</h2>
+        </div>
+        <p className="text-sm text-[#40484c]/70 mb-6 font-medium">
+          Are you sure you want to remove <span className="font-bold text-red-600">{targetUser.name}</span>? This action cannot be undone.
+        </p>
+        <div className="flex gap-3">
+          <Button type="button" variant="outline" onClick={onClose} className="flex-1 py-3 border-gray-200">Cancel</Button>
+          <button
+            onClick={onConfirm}
+            disabled={loading}
+            className="flex-1 py-3 bg-red-600 hover:bg-red-700 text-white rounded-xl font-bold transition-colors"
+          >
+            {loading ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : 'Remove User'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Department mapping
+const getDepartment = (role) => {
+  const map = {
+    FINANCE: 'Finance',
+    ADMIN: 'Administration',
+    MANAGER: 'Management',
+    DIRECTOR: 'Executive',
+    EMPLOYEE: 'Operations',
+  };
+  return map[role] || 'General';
+};
+
 export default function AdminDashboard() {
   const { user } = useContext(AuthContext);
   
@@ -95,7 +187,24 @@ export default function AdminDashboard() {
 
   // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
-  const usersPerPage = 4;
+  const usersPerPage = 20;
+
+  // View filter: 'all' | 'department'
+  const [viewMode, setViewMode] = useState('all');
+
+  // Action dropdown state
+  const [openMenuId, setOpenMenuId] = useState(null);
+  const menuRef = useRef(null);
+
+  // Change Role modal
+  const [roleModalOpen, setRoleModalOpen] = useState(false);
+  const [roleTarget, setRoleTarget] = useState(null);
+  const [roleLoading, setRoleLoading] = useState(false);
+
+  // Delete modal
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   const fetchUsers = async () => {
     try {
@@ -114,6 +223,17 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     fetchUsers();
+  }, []);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handler = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setOpenMenuId(null);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
   }, []);
 
   const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -142,11 +262,52 @@ export default function AdminDashboard() {
     }
   };
 
+  // Change Role handler
+  const handleRoleChange = async (newRole) => {
+    setRoleLoading(true);
+    try {
+      const token = localStorage.getItem('token');
+      await axios.patch(`http://localhost:5000/api/users/${roleTarget.id}/role`, { role: newRole }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      fetchUsers();
+      setRoleModalOpen(false);
+      setRoleTarget(null);
+    } catch (err) {
+      console.error('Failed to update role', err);
+    } finally {
+      setRoleLoading(false);
+    }
+  };
+
+  // Delete user handler
+  const handleDeleteUser = async () => {
+    setDeleteLoading(true);
+    try {
+      const token = localStorage.getItem('token');
+      await axios.delete(`http://localhost:5000/api/users/${deleteTarget.id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      fetchUsers();
+      setDeleteModalOpen(false);
+      setDeleteTarget(null);
+    } catch (err) {
+      console.error('Failed to delete user', err);
+    } finally {
+      setDeleteLoading(false);
+    }
+  };
+
+  // Filter logic
+  const filteredUsers = viewMode === 'department'
+    ? [...users].sort((a, b) => a.role.localeCompare(b.role))
+    : users;
+
   // Pagination Logic
   const indexOfLastUser = currentPage * usersPerPage;
   const indexOfFirstUser = indexOfLastUser - usersPerPage;
-  const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
-  const totalPages = Math.ceil(users.length / usersPerPage);
+  const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
+  const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
@@ -154,6 +315,90 @@ export default function AdminDashboard() {
   const getInitials = (name) => {
     return name.split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase();
   };
+
+  // Group users by department when in department view
+  const groupedByDepartment = viewMode === 'department'
+    ? currentUsers.reduce((acc, u) => {
+        const dept = getDepartment(u.role);
+        if (!acc[dept]) acc[dept] = [];
+        acc[dept].push(u);
+        return acc;
+      }, {})
+    : null;
+
+  const renderUserRow = (u, i) => (
+    <tr key={u.id || i} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors group">
+      <td className="px-6 py-4 flex items-center gap-4">
+        <div className={`w-12 h-12 rounded-xl flex items-center justify-center font-bold text-lg
+          ${i % 3 === 0 ? 'bg-[#cfe6f2] text-[#003345]' : i % 3 === 1 ? 'bg-indigo-50 text-indigo-700' : 'bg-rose-50 text-rose-700'}`}>
+          {getInitials(u.name)}
+        </div>
+        <div>
+          <p className="font-bold text-[#003345]">{u.name}</p>
+          <p className="text-xs font-medium text-[#40484c]/60 mt-0.5">{u.email}</p>
+        </div>
+      </td>
+      <td className="px-6 py-4">
+        <div className="flex items-center gap-2">
+          {u.role === 'FINANCE' || u.role === 'ADMIN' ? 
+            <Building2 className="w-4 h-4 text-[#14696d]" /> : 
+            <Users className="w-4 h-4 text-[#40484c]/60" />
+          }
+          <span className={`text-sm font-bold ${u.role === 'FINANCE' || u.role === 'ADMIN' ? 'text-[#003345]' : 'text-[#40484c]/80'}`}>
+            {u.role === 'EMPLOYEE' ? 'Employee' : 
+             u.role === 'FINANCE' ? 'Finance Officer' : 
+             u.role === 'MANAGER' ? 'Manager' :
+             u.role === 'DIRECTOR' ? 'Director' :
+             u.role === 'ADMIN' ? 'System Admin' : u.role}
+          </span>
+        </div>
+      </td>
+      <td className="px-6 py-4 text-sm font-medium text-[#40484c]/70">
+        {getDepartment(u.role)}
+      </td>
+      <td className="px-6 py-4">
+        <span className="inline-flex items-center px-3 py-1 bg-[#d5ecf8] text-[#003345] text-xs font-black tracking-widest rounded-full uppercase">
+          Active
+        </span>
+      </td>
+      <td className="px-6 py-4 text-center relative">
+        <div ref={openMenuId === u.id ? menuRef : null} className="relative inline-block">
+          <button
+            onClick={() => setOpenMenuId(openMenuId === u.id ? null : u.id)}
+            className="text-gray-400 hover:text-[#003345] transition-colors"
+          >
+            <MoreVertical className="w-5 h-5 mx-auto" />
+          </button>
+          {openMenuId === u.id && (
+            <div className="absolute right-0 mt-1 w-44 bg-white rounded-xl shadow-xl border border-gray-100 z-20 overflow-hidden animate-in fade-in duration-150">
+              <button
+                onClick={() => {
+                  setRoleTarget(u);
+                  setRoleModalOpen(true);
+                  setOpenMenuId(null);
+                }}
+                className="flex items-center gap-2 px-4 py-3 text-sm font-semibold text-[#003345] hover:bg-[#f3faff] w-full text-left transition-colors"
+              >
+                <Edit2 className="w-4 h-4" />
+                Change Role
+              </button>
+              <button
+                onClick={() => {
+                  setDeleteTarget(u);
+                  setDeleteModalOpen(true);
+                  setOpenMenuId(null);
+                }}
+                className="flex items-center gap-2 px-4 py-3 text-sm font-semibold text-red-600 hover:bg-red-50 w-full text-left transition-colors"
+              >
+                <Trash2 className="w-4 h-4" />
+                Remove User
+              </button>
+            </div>
+          )}
+        </div>
+      </td>
+    </tr>
+  );
 
   return (
     <div className="p-8 max-w-[1400px] mx-auto space-y-8 animate-in fade-in duration-500">
@@ -214,17 +459,20 @@ export default function AdminDashboard() {
           <div className="flex flex-wrap items-center gap-6">
             <h2 className="text-lg font-headline font-black text-[#003345]">Directory</h2>
             <div className="flex bg-gray-50 rounded-full p-1 border border-gray-200/60">
-              <button className="px-5 py-1.5 rounded-full bg-[#d5ecf8] text-[#003345] text-sm font-bold transition-colors">
+              <button
+                onClick={() => { setViewMode('all'); setCurrentPage(1); }}
+                className={`px-5 py-1.5 rounded-full text-sm font-bold transition-colors ${viewMode === 'all' ? 'bg-[#d5ecf8] text-[#003345]' : 'text-[#40484c]/60 hover:text-[#003345]'}`}
+              >
                 All Users
               </button>
-              <button className="px-5 py-1.5 rounded-full text-[#40484c]/60 hover:text-[#003345] text-sm font-bold transition-colors">
+              <button
+                onClick={() => { setViewMode('department'); setCurrentPage(1); }}
+                className={`px-5 py-1.5 rounded-full text-sm font-bold transition-colors ${viewMode === 'department' ? 'bg-[#d5ecf8] text-[#003345]' : 'text-[#40484c]/60 hover:text-[#003345]'}`}
+              >
                 By Department
               </button>
             </div>
           </div>
-          <button className="text-gray-400 hover:text-[#003345]">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18M6 12h12m-9 6h6"/></svg>
-          </button>
         </div>
 
         {/* Table Content */}
@@ -242,49 +490,19 @@ export default function AdminDashboard() {
             <tbody>
               {loadingUsers ? (
                   <tr><td colSpan="5" className="p-12"><Loader2 className="w-8 h-8 animate-spin mx-auto text-[#003345]" /></td></tr>
-              ) : (
-                currentUsers.map((u, i) => (
-                  <tr key={u.id || i} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors group">
-                    <td className="px-6 py-4 flex items-center gap-4">
-                      <div className={`w-12 h-12 rounded-xl flex items-center justify-center font-bold text-lg
-                        ${i % 3 === 0 ? 'bg-[#cfe6f2] text-[#003345]' : i % 3 === 1 ? 'bg-indigo-50 text-indigo-700' : 'bg-rose-50 text-rose-700'}`}>
-                        {getInitials(u.name)}
-                      </div>
-                      <div>
-                        <p className="font-bold text-[#003345]">{u.name}</p>
-                        <p className="text-xs font-medium text-[#40484c]/60 mt-0.5">{u.email}</p>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-2">
-                        {u.role === 'FINANCE' || u.role === 'ADMIN' ? 
-                          <Building2 className="w-4 h-4 text-[#14696d]" /> : 
-                          <Users className="w-4 h-4 text-[#40484c]/60" />
-                        }
-                        <span className={`text-sm font-bold ${u.role === 'FINANCE' || u.role === 'ADMIN' ? 'text-[#003345]' : 'text-[#40484c]/80'}`}>
-                          {u.role === 'EMPLOYEE' ? 'Employee' : 
-                           u.role === 'FINANCE' ? 'Finance Officer' : 
-                           u.role === 'MANAGER' ? 'Manager' :
-                           u.role === 'DIRECTOR' ? 'Director' :
-                           u.role === 'ADMIN' ? 'System Admin' : u.role}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 text-sm font-medium text-[#40484c]/70">
-                      {u.role === 'FINANCE' ? 'Global Operations' : 'R&D Engineering'} 
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className="inline-flex items-center px-3 py-1 bg-[#d5ecf8] text-[#003345] text-xs font-black tracking-widest rounded-full uppercase">
-                        Active
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-center">
-                      <button className="text-gray-400 hover:text-[#003345] opacity-0 group-hover:opacity-100 transition-opacity">
-                        <MoreVertical className="w-5 h-5 mx-auto" />
-                      </button>
-                    </td>
-                  </tr>
+              ) : viewMode === 'department' && groupedByDepartment ? (
+                Object.entries(groupedByDepartment).map(([dept, deptUsers]) => (
+                  <React.Fragment key={dept}>
+                    <tr className="bg-[#f3faff]">
+                      <td colSpan="5" className="px-6 py-2 text-xs font-black uppercase tracking-widest text-[#003345]/60">
+                        {dept} ({deptUsers.length})
+                      </td>
+                    </tr>
+                    {deptUsers.map((u, i) => renderUserRow(u, i))}
+                  </React.Fragment>
                 ))
+              ) : (
+                currentUsers.map((u, i) => renderUserRow(u, i))
               )}
             </tbody>
           </table>
@@ -293,7 +511,7 @@ export default function AdminDashboard() {
         {/* Pagination */}
         <div className="px-6 py-4 border-t border-gray-100 flex items-center justify-between text-sm">
           <p className="text-[#40484c]/60 font-medium">
-            Showing {users.length > 0 ? indexOfFirstUser + 1 : 0} to {Math.min(indexOfLastUser, users.length)} of {users.length} entries
+            Showing {filteredUsers.length > 0 ? indexOfFirstUser + 1 : 0} to {Math.min(indexOfLastUser, filteredUsers.length)} of {filteredUsers.length} entries
           </p>
           <div className="flex items-center gap-2">
             <button 
@@ -318,7 +536,7 @@ export default function AdminDashboard() {
 
             <button 
               onClick={() => paginate(currentPage + 1)} 
-              disabled={currentPage === totalPages}
+              disabled={currentPage === totalPages || totalPages === 0}
               className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 disabled:opacity-50 text-[#003345]"
             >
               <ChevronRight className="w-4 h-4" />
@@ -337,7 +555,7 @@ export default function AdminDashboard() {
          </div>
       </footer>
 
-      {/* Render Modal */}
+      {/* Render Modals */}
       <CreateUserModal 
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -346,6 +564,22 @@ export default function AdminDashboard() {
         handleSubmit={handleSubmit}
         creating={creating}
         message={message}
+      />
+
+      <ChangeRoleModal
+        isOpen={roleModalOpen}
+        onClose={() => { setRoleModalOpen(false); setRoleTarget(null); }}
+        targetUser={roleTarget}
+        onConfirm={handleRoleChange}
+        loading={roleLoading}
+      />
+
+      <ConfirmDeleteModal
+        isOpen={deleteModalOpen}
+        onClose={() => { setDeleteModalOpen(false); setDeleteTarget(null); }}
+        targetUser={deleteTarget}
+        onConfirm={handleDeleteUser}
+        loading={deleteLoading}
       />
     </div>
   );

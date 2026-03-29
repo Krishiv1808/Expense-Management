@@ -22,16 +22,17 @@ export default function AppLayout() {
   const basePath = getBasePath();
 
   const navItems = [
-    { name: 'Dashboard', path: `${basePath}/overview`, icon: LayoutDashboard },
+    ...(!(['ADMIN'].includes(user?.role)) ? [
+      { name: 'Dashboard', path: `${basePath}/overview`, icon: LayoutDashboard },
+    ] : []),
     ...(['MANAGER', 'FINANCE', 'DIRECTOR'].includes(user?.role) ? [
       { name: 'Approved Claims', path: `${basePath}/approved`, icon: CheckCircle },
       { name: 'My Expenses', path: `/user-dashboard/overview`, icon: FileText }
-    ] : [
+    ] : []),
+    ...(!(['ADMIN', 'MANAGER', 'FINANCE', 'DIRECTOR'].includes(user?.role)) ? [
       { name: 'Claims', path: `${basePath}/claims`, icon: FileText }
-    ]),
+    ] : []),
     ...(user?.role === 'ADMIN' ? [
-      { name: 'Approved Claims', path: `${basePath}/approved`, icon: CheckCircle },
-      { name: 'Team', path: `${basePath}/team`, icon: Users },
       { name: 'Users', path: `${basePath}/users`, icon: Shield }
     ] : []),
     { name: 'Settings', path: `${basePath}/settings`, icon: Settings },
@@ -95,16 +96,6 @@ export default function AppLayout() {
         {/* Top Navbar */}
         <header className="h-16 bg-white/50 backdrop-blur-md border-b border-[#003345]/5 sticky top-0 z-10 px-8 flex items-center justify-between">
           <div className="flex-1 max-w-xl relative hidden md:block">
-            {user?.role === 'ADMIN' && (
-              <>
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#40484c]/40" />
-                <input 
-                  type="text" 
-                  placeholder="Search users..." 
-                  className="w-full bg-[#003345]/5 border-none rounded-full py-2 pl-10 pr-4 text-sm font-medium focus:ring-2 focus:ring-[#003345]/20 outline-none"
-                />
-              </>
-            )}
           </div>
 
           <div className="flex items-center gap-6">

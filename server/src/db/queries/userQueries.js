@@ -55,6 +55,12 @@ const userQueries = {
     SET password_hash = $1
     WHERE id = $2
     RETURNING id;
+  `,
+
+  deleteUser: `
+    DELETE FROM users
+    WHERE id = $1 AND company_id = $2
+    RETURNING id, name, email;
   `
 };
 
