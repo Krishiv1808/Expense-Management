@@ -1,13 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { motion } from 'framer-motion';
 import { ArrowLeft, User, Mail, Lock, Building, Globe, Loader2 } from 'lucide-react';
 import { Button } from '../components/Button';
 import { Card } from '../components/UI';
+import { AuthContext } from '../context/AuthContext';
 
 export default function Signup() {
   const navigate = useNavigate();
+  const { login } = useContext(AuthContext);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -44,8 +46,7 @@ export default function Signup() {
     setError('');
     try {
       const res = await axios.post('http://localhost:5000/api/auth/register', formData);
-      localStorage.setItem('token', res.data.token);
-      localStorage.setItem('user', JSON.stringify(res.data.user));
+      login(res.data.token, res.data.user);
       navigate('/admin-dashboard');
     } catch (err) {
       setError(err.response?.data?.message || 'Registration failed');

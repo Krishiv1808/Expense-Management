@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { motion } from 'framer-motion';
 import { Mail, Lock, Loader2 } from 'lucide-react';
 import { Button } from '../components/Button';
 import { Card } from '../components/UI';
+import { AuthContext } from '../context/AuthContext';
 
 export default function Login() {
   const navigate = useNavigate();
+  const { login } = useContext(AuthContext);
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -25,8 +27,8 @@ export default function Login() {
     setError('');
     try {
       const res = await axios.post('http://localhost:5000/api/auth/login', formData);
-      localStorage.setItem('token', res.data.token);
-      localStorage.setItem('user', JSON.stringify(res.data.user));
+      
+      login(res.data.token, res.data.user);
       
       if (res.data.user.role === 'ADMIN') {
         navigate('/admin-dashboard');

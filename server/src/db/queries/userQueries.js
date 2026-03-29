@@ -48,6 +48,13 @@ const userQueries = {
     SELECT id, name
     FROM companies
     WHERE name = $1;
+  `,
+
+  updatePassword: `
+    UPDATE users
+    SET password_hash = $1
+    WHERE id = $2
+    RETURNING id;
   `
 };
 

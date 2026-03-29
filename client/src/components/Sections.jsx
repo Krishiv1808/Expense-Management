@@ -11,26 +11,44 @@ const simpleFadeIn = {
   transition: { duration: 0.4 }
 };
 
-export const Navbar = () => (
-  <nav className="fixed top-0 w-full z-50 bg-white shadow-sm border-b border-gray-100">
-    <div className="flex justify-between items-center w-full px-8 py-4 max-w-7xl mx-auto">
-      <Link to="/" className="text-xl font-bold tracking-tighter text-primary font-headline">Stratos Ledger</Link>
-      <div className="hidden md:flex items-center gap-8">
-        {['Product', 'Solutions', 'Pricing', 'Contact'].map((item) => (
-          <a key={item} className="text-on-surface-variant hover:text-primary transition-all font-semibold font-body text-sm" href="#">{item}</a>
-        ))}
+import { useContext } from 'react';
+import { AuthContext } from '../context/AuthContext';
+
+export const Navbar = () => {
+  const { user, logout } = useContext(AuthContext);
+
+  return (
+    <nav className="fixed top-0 w-full z-50 bg-white shadow-sm border-b border-gray-100">
+      <div className="flex justify-between items-center w-full px-8 py-4 max-w-7xl mx-auto">
+        <Link to="/" className="text-xl font-bold tracking-tighter text-primary font-headline">Stratos Ledger</Link>
+        <div className="hidden md:flex items-center gap-8">
+          {['Product', 'Solutions', 'Pricing', 'Contact'].map((item) => (
+            <a key={item} className="text-on-surface-variant hover:text-primary transition-all font-semibold font-body text-sm" href="#">{item}</a>
+          ))}
+        </div>
+        <div className="flex items-center gap-3">
+          {user ? (
+            <>
+              <Link to={user.role === 'ADMIN' ? '/admin-dashboard' : '/user-dashboard'}>
+                <Button variant="ghost">Dashboard</Button>
+              </Link>
+              <Button onClick={logout}>Logout</Button>
+            </>
+          ) : (
+            <>
+              <Link to="/login">
+                <Button variant="ghost">Login</Button>
+              </Link>
+              <Link to="/signup">
+                <Button>Company Setup</Button>
+              </Link>
+            </>
+          )}
+        </div>
       </div>
-      <div className="flex items-center gap-3">
-        <Link to="/login">
-            <Button variant="ghost">Login</Button>
-        </Link>
-        <Link to="/signup">
-            <Button>Get Started</Button>
-        </Link>
-      </div>
-    </div>
-  </nav>
-);
+    </nav>
+  );
+};
 
 export const Hero = () => (
   <section className="px-8 pt-32 pb-20 md:pt-48 md:pb-32 max-w-7xl mx-auto flex flex-col items-center text-center">
