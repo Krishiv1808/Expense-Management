@@ -13,6 +13,19 @@ const currencyService = {
       console.error('Error fetching currency:', err.message);
       return 'USD'; // Fallback
     }
+  },
+
+  getAllCountries: async () => {
+    try {
+      const response = await axios.get('https://restcountries.com/v3.1/all?fields=name,cca2');
+      return response.data.map(c => ({
+        name: c.name.common,
+        code: c.cca2
+      })).sort((a, b) => a.name.localeCompare(b.name));
+    } catch (err) {
+      console.error('Error fetching countries:', err.message);
+      return [];
+    }
   }
 };
 

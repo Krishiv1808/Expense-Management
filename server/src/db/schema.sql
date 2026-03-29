@@ -1,24 +1,24 @@
 -- Enable UUID extension
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
--- Companies table
+-- Companies Table (Created during Admin Signup)
 CREATE TABLE IF NOT EXISTS companies (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    name VARCHAR(255) NOT NULL,
-    default_currency VARCHAR(10) NOT NULL,
-    country VARCHAR(100) NOT NULL,
+    name VARCHAR(255) NOT NULL, -- Company name from signup
+    default_currency VARCHAR(10) NOT NULL, -- Fetched by API based on country
+    country VARCHAR(100) NOT NULL, -- From dropdown selection
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- Users table
+-- Users Table (Admin user created along with company)
 CREATE TABLE IF NOT EXISTS users (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    name VARCHAR(255) NOT NULL,
-    email VARCHAR(255) UNIQUE NOT NULL,
-    password_hash VARCHAR(255) NOT NULL,
-    role VARCHAR(50) NOT NULL CHECK (role IN ('ADMIN', 'MANAGER', 'EMPLOYEE')),
+    name VARCHAR(255) NOT NULL, -- User/Admin Full Name
+    email VARCHAR(255) UNIQUE NOT NULL, -- Login Email
+    password_hash VARCHAR(255) NOT NULL, -- Securely hashed password
+    role VARCHAR(50) NOT NULL CHECK (role IN ('ADMIN', 'MANAGER', 'EMPLOYEE', 'FINANCE', 'DIRECTOR')),
     company_id UUID REFERENCES companies(id),
-    manager_id UUID REFERENCES users(id), -- Manager for hierarchy
+    manager_id UUID REFERENCES users(id), -- Hierarchical manager (null for top Admin)
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
