@@ -2,13 +2,16 @@ const { Client } = require('pg');
 const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '.env') });
 
+const host = process.env.LOCAL_DB_HOST || process.env.CLOUD_DB_HOST;
+
 const migrate = async () => {
   const client = new Client({
-    user: process.env.DB_USER || 'postgres',
-    host: process.env.DB_HOST || 'localhost',
-    password: process.env.DB_PASSWORD || 'postgres',
-    port: process.env.DB_PORT || 5432,
-    database: process.env.DB_NAME || 'expense_mgmt'
+    user: process.env.LOCAL_DB_USER || process.env.CLOUD_DB_USER,
+    host: host,
+    password: process.env.LOCAL_DB_PASSWORD || process.env.CLOUD_DB_PASSWORD,
+    port: process.env.LOCAL_DB_PORT || process.env.CLOUD_DB_PORT,
+    database: process.env.LOCAL_DB_NAME || process.env.CLOUD_DB_NAME,
+    ssl: (host && host !== 'localhost') ? { rejectUnauthorized: false } : false
   });
 
   try {
