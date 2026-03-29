@@ -109,7 +109,7 @@ export default function EmployeeDashboard() {
                 <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-sm font-semibold mb-2">Amount</label>
-                    <input type="number" step="0.01" name="amount" value={formData.amount} onChange={handleTextChange} className="w-full p-3 rounded-xl border border-outline focus:border-primary outline-none" required />
+                    <input type="number" step="0.01" name="amount" value={formData.amount} onChange={handleTextChange} placeholder="Leave blank for AI auto-fill" className="w-full p-3 rounded-xl border border-outline focus:border-primary outline-none" />
                   </div>
                   <div>
                     <label className="block text-sm font-semibold mb-2">Currency</label>
@@ -121,7 +121,8 @@ export default function EmployeeDashboard() {
                   </div>
                   <div>
                     <label className="block text-sm font-semibold mb-2">Date of Expense</label>
-                    <input type="date" name="date" value={formData.date} onChange={handleTextChange} className="w-full p-3 rounded-xl border border-outline focus:border-primary outline-none" required />
+                    <input type="date" name="date" value={formData.date} onChange={handleTextChange} className="w-full p-3 rounded-xl border border-outline focus:border-primary outline-none" />
+                    <p className="text-xs text-gray-500 mt-1">Leave blank to extract from receipt</p>
                   </div>
                   <div className="md:col-span-2">
                     <label className="block text-sm font-semibold mb-2">Description</label>

@@ -7,6 +7,8 @@ const pool = new Pool({
   database: process.env.DB_NAME || 'expense_mgmt',
   password: process.env.DB_PASSWORD || 'postgres',
   port: process.env.DB_PORT || 5432,
+  // Added SSL support for Cloud DBs (Supabase/Neon)
+  ssl: process.env.DB_HOST !== 'localhost' ? { rejectUnauthorized: false } : false
 });
 
 pool.on('connect', () => {

@@ -1,17 +1,42 @@
 const db = require('../../config/db');
 const expenseQueries = require('../../db/queries/expenseQueries');
+const ocrService = require('../../services/ocrService');
 
 const expenseController = {
   createClaim: async (req, res) => {
     try {
-      const { amount, currency, category, description, date } = req.body;
+      let { amount, currency, category, description, date } = req.body;
       const employeeId = req.user.id;
       const companyId = req.user.companyId;
       
       let receiptUrl = null;
+      let ocrMetadata = null;
+
       if (req.file) {
-        // Construct the URL path to the file
+        // 1. Store the URL
         receiptUrl = `/uploads/${req.file.filename}`;
+        
+        // 2. Perform OCR (Scanning the physical on-disk file path)
+        try {
+          ocrMetadata = await ocrService.processReceipt(req.file.path);
+          
+          // Auto-fill missing data if OCR found it
+          if (!amount && ocrMetadata.amount) {
+            amount = ocrMetadata.amount;
+          }
+          if (!date && ocrMetadata.date) {
+            try {
+              date = new Date(ocrMetadata.date).toISOString().split('T')[0];
+            } catch(e) {}
+          }
+          if (ocrMetadata.merchant) {
+            description = description 
+              ? `${description} (OCR Merchant: ${ocrMetadata.merchant})` 
+              : `Merchant: ${ocrMetadata.merchant}`;
+          }
+        } catch (ocrErr) {
+          console.error('⚠️ OCR Warning (Processing continued without scan):', ocrErr.message);
+        }
       }
 
       if (!amount || !currency || !date) {
@@ -31,7 +56,8 @@ const expenseController = {
 
       res.status(201).json({
         message: 'Expense claim submitted successfully',
-        expense: result.rows[0]
+        expense: result.rows[0],
+        ocr: ocrMetadata // Provide feedback to the client
       });
     } catch (err) {
       console.error('Error creating claim:', err);
