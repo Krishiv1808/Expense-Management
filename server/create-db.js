@@ -1,15 +1,18 @@
 const { Client } = require('pg');
 const fs = require('fs');
 const path = require('path');
-require('dotenv').config({ path: path.join(__dirname, 'src', '.env') });
+require('dotenv').config({ path: path.join(__dirname, '.env') });
+
+const host = process.env.LOCAL_DB_HOST || process.env.CLOUD_DB_HOST;
 
 const createDB = async () => {
   const client = new Client({
-    user: process.env.DB_USER || 'postgres',
-    host: process.env.DB_HOST || 'localhost',
-    password: process.env.DB_PASSWORD || 'postgres',
-    port: process.env.DB_PORT || 5432,
-    database: 'postgres' // Connect to default DB first to create new DB
+    user: process.env.LOCAL_DB_USER || process.env.CLOUD_DB_USER,
+    host: host,
+    password: process.env.LOCAL_DB_PASSWORD || process.env.CLOUD_DB_PASSWORD,
+    port: process.env.LOCAL_DB_PORT || process.env.CLOUD_DB_PORT,
+    database: 'postgres', // Connect to default DB first to create new DB
+    ssl: (host && host !== 'localhost') ? { rejectUnauthorized: false } : false
   });
 
   try {
@@ -29,12 +32,14 @@ const createDB = async () => {
     await client.end();
 
     // Now connect to the new DB and run schema
+    const dbName = process.env.LOCAL_DB_NAME || process.env.CLOUD_DB_NAME;
     const newClient = new Client({
-      user: process.env.DB_USER || 'postgres',
-      host: process.env.DB_HOST || 'localhost',
-      password: process.env.DB_PASSWORD || 'postgres',
-      port: process.env.DB_PORT || 5432,
-      database: 'expense_mgmt'
+      user: process.env.LOCAL_DB_USER || process.env.CLOUD_DB_USER,
+      host: host,
+      password: process.env.LOCAL_DB_PASSWORD || process.env.CLOUD_DB_PASSWORD,
+      port: process.env.LOCAL_DB_PORT || process.env.CLOUD_DB_PORT,
+      database: dbName,
+      ssl: (host && host !== 'localhost') ? { rejectUnauthorized: false } : false
     });
 
     await newClient.connect();
