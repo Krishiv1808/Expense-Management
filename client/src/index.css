@@ -16,7 +16,7 @@
   --color-surface-container-highest: #cfe6f2;
   --color-on-surface: #071e27;
   --color-on-surface-variant: #40484c;
-  --color-outline-variant: rgba(192, 199, 205, 0.15);
+  --color-outline-variant: rgba(0, 51, 69, 0.08);
   --color-error: #ba1a1a;
   --color-error-container: #ffdad6;
   --color-tertiary-container: #004e44;
@@ -26,12 +26,24 @@
   body {
     @apply bg-surface text-on-surface font-body;
   }
+
+  h1, h2, h3, h4, .font-headline {
+    letter-spacing: -0.01em;
+  }
 }
 
 .glass {
-  @apply bg-surface-container-highest/70 backdrop-blur-md;
+  @apply bg-white/90 border border-primary/5 shadow-sm;
 }
 
 .ambient-shadow {
-  box-shadow: 0 0 32px 0 rgba(0, 51, 69, 0.06);
+  @apply shadow-lg;
+}
+
+.premium-gradient {
+  @apply bg-primary;
+}
+
+.text-gradient {
+  @apply text-primary;
 }

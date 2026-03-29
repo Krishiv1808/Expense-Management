@@ -3,17 +3,23 @@ import { ArrowRight, Brain, ShieldCheck, Zap, CheckCircle, RefreshCw, Quote, Ale
 import { Button } from './Button';
 import { Badge, Card } from './UI';
 
+const simpleFadeIn = {
+  initial: { opacity: 0, y: 15 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true },
+  transition: { duration: 0.4 }
+};
+
 export const Navbar = () => (
-  <nav className="fixed top-0 w-full z-50 bg-white/70 backdrop-blur-xl shadow-sm">
+  <nav className="fixed top-0 w-full z-50 bg-white shadow-sm border-b border-gray-100">
     <div className="flex justify-between items-center w-full px-8 py-4 max-w-7xl mx-auto">
-      <div className="text-2xl font-bold tracking-tighter text-primary font-headline">Stratos Ledger</div>
+      <div className="text-xl font-bold tracking-tighter text-primary font-headline">Stratos Ledger</div>
       <div className="hidden md:flex items-center gap-8">
-        <a className="text-primary font-bold border-b-2 border-primary pb-1 font-body text-sm" href="#">Product</a>
-        <a className="text-on-surface-variant hover:text-primary transition-colors font-body text-sm" href="#">Solutions</a>
-        <a className="text-on-surface-variant hover:text-primary transition-colors font-body text-sm" href="#">Pricing</a>
-        <a className="text-on-surface-variant hover:text-primary transition-colors font-body text-sm" href="#">Contact</a>
+        {['Product', 'Solutions', 'Pricing', 'Contact'].map((item) => (
+          <a key={item} className="text-on-surface-variant hover:text-primary transition-all font-semibold font-body text-sm" href="#">{item}</a>
+        ))}
       </div>
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-3">
         <Button variant="ghost">Login</Button>
         <Button>Get Started</Button>
       </div>
@@ -22,28 +28,19 @@ export const Navbar = () => (
 );
 
 export const Hero = () => (
-  <section className="relative overflow-hidden px-8 pt-32 pb-20 md:pt-48 md:pb-32 max-w-7xl mx-auto flex flex-col items-center text-center">
-    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full -z-10 opacity-20 pointer-events-none">
-      <div className="absolute top-0 right-0 w-96 h-96 bg-secondary-container rounded-full blur-[120px]"></div>
-      <div className="absolute bottom-0 left-0 w-96 h-96 bg-primary-container rounded-full blur-[120px]"></div>
-    </div>
-    
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6 }}
-    >
+  <section className="px-8 pt-32 pb-20 md:pt-48 md:pb-32 max-w-7xl mx-auto flex flex-col items-center text-center">
+    <motion.div {...simpleFadeIn}>
       <Badge>Efficiency First</Badge>
-      <h1 className="font-headline text-5xl md:text-7xl font-extrabold text-primary tracking-tight mb-8 leading-[1.1]">
+      <h1 className="font-headline text-5xl md:text-7xl font-extrabold text-primary tracking-tight mb-8 leading-tight">
         Reimbursements, <br/><span className="text-secondary">Reimagined.</span>
       </h1>
-      <p className="max-w-2xl text-on-surface-variant text-lg md:text-xl font-medium mb-10 leading-relaxed mx-auto">
+      <p className="max-w-2xl text-on-surface-variant text-lg md:text-xl font-medium mb-12 opacity-80 mx-auto">
         Empower your workforce with lightning-fast approvals and precision tracking. Stop chasing receipts and start scaling your business.
       </p>
       
       <div className="flex flex-col sm:flex-row gap-4 items-center justify-center">
         <Button className="px-10 py-4 text-lg">Get Started Free</Button>
-        <Button variant="ghost" className="px-10 py-4 text-lg group">
+        <Button variant="ghost" className="px-10 py-4 text-lg group font-bold">
           Book a Demo
           <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
         </Button>
@@ -51,30 +48,31 @@ export const Hero = () => (
     </motion.div>
 
     <motion.div 
-      initial={{ opacity: 0, scale: 0.95 }}
+      initial={{ opacity: 0, scale: 0.98 }}
       animate={{ opacity: 1, scale: 1 }}
-      transition={{ delay: 0.3, duration: 0.8 }}
-      className="mt-20 w-full max-w-5xl rounded-2xl overflow-hidden shadow-2xl shadow-primary/10 bg-surface-container-highest/70 backdrop-blur-md p-2"
+      transition={{ delay: 0.2, duration: 0.5 }}
+      className="mt-28 w-full max-w-5xl rounded-3xl overflow-hidden shadow-2xl shadow-primary/5 bg-white p-2"
     >
-      <div className="aspect-video w-full rounded-xl bg-surface-container-low relative overflow-hidden">
-        <img 
-          className="w-full h-full object-cover" 
-          src="https://picsum.photos/seed/dashboard/1200/800" 
-          alt="Dashboard"
-          referrerPolicy="no-referrer"
-        />
+      <div className="aspect-video w-full rounded-2xl bg-gray-50 relative overflow-hidden text-center flex items-center justify-center">
+        <div className="p-12">
+          <img 
+            className="w-full h-full object-cover rounded-xl shadow-lg" 
+            src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=1200" 
+            alt="Dashboard"
+            referrerPolicy="no-referrer"
+          />
+        </div>
       </div>
     </motion.div>
   </section>
 );
 
 export const Logos = () => (
-  <section className="bg-surface-container-low py-16">
+  <section className="py-16 grayscale opacity-40">
     <div className="max-w-7xl mx-auto px-8">
-      <p className="text-center font-body text-xs uppercase tracking-[0.3em] text-on-surface-variant/60 mb-10">Trusted by the most innovative teams</p>
-      <div className="flex flex-wrap justify-center items-center gap-12 md:gap-20 opacity-40 grayscale hover:grayscale-0 transition-all">
+      <div className="flex flex-wrap justify-center items-center gap-12 md:gap-20 text-lg font-bold text-on-surface-variant/40">
         {['Logo 1', 'Logo 2', 'Logo 3', 'Logo 4', 'Logo 5'].map((logo, i) => (
-          <div key={i} className="h-8 w-24 bg-primary/20 rounded"></div>
+          <span key={logo}>{logo}</span>
         ))}
       </div>
     </div>
@@ -83,86 +81,63 @@ export const Logos = () => (
 
 export const Features = () => (
   <section className="py-24 px-8 max-w-7xl mx-auto">
-    <div className="mb-16 text-center">
-      <h2 className="font-headline text-3xl md:text-4xl font-bold text-primary mb-4">Precision-Engineered for Speed</h2>
-      <p className="text-on-surface-variant max-w-xl mx-auto">Eliminate friction from your financial operations with our core platform pillars.</p>
-    </div>
+    <motion.div {...simpleFadeIn} className="mb-16 text-center">
+      <h2 className="font-headline text-3xl md:text-4xl font-bold text-primary mb-4 tracking-tight">Precision-Engineered for Speed</h2>
+      <p className="text-on-surface-variant max-w-xl mx-auto font-medium opacity-70">Eliminate friction from your financial operations with our core platform pillars.</p>
+    </motion.div>
 
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-      {/* AI Powered Extraction */}
-      <Card variant="low" className="md:col-span-2 flex flex-col justify-between overflow-hidden relative group">
-        <div className="max-w-md relative z-10">
+      <Card variant="low" className="md:col-span-2 flex flex-col justify-between group shadow-sm bg-gray-50/50">
+        <div>
           <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center mb-6 text-white">
             <Brain className="w-6 h-6" />
           </div>
           <h3 className="font-headline text-2xl font-bold text-primary mb-4">AI-Powered Extraction</h3>
-          <p className="text-on-surface-variant leading-relaxed">
+          <p className="text-on-surface-variant font-medium opacity-70">
             Upload receipts and let our proprietary AI engine handle the data entry. We extract merchant data, taxes, and categories with 99.9% accuracy.
           </p>
         </div>
-        <div className="mt-8 relative h-48 rounded-xl overflow-hidden shadow-lg transform group-hover:-translate-y-2 transition-transform duration-500">
-          <img 
-            className="w-full h-full object-cover" 
-            src="https://picsum.photos/seed/ai/800/600" 
-            alt="AI Extraction"
-            referrerPolicy="no-referrer"
-          />
+        <div className="mt-8 relative h-48 rounded-2xl overflow-hidden shadow-md">
+          <img className="w-full h-full object-cover" src="https://images.unsplash.com/photo-1551288049-bbbda536339a?auto=format&fit=crop&q=80&w=800" alt="AI Extraction" referrerPolicy="no-referrer" />
         </div>
       </Card>
 
-      {/* Policy Compliance */}
-      <Card className="bg-secondary text-white flex flex-col group overflow-hidden">
+      <Card variant="high" className="flex flex-col bg-secondary text-white border-none shadow-md">
         <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center mb-6">
           <ShieldCheck className="w-6 h-6" />
         </div>
         <h3 className="font-headline text-2xl font-bold mb-4">Policy Compliance</h3>
-        <p className="opacity-80 leading-relaxed mb-8">
-          Automatic flags for out-of-policy expenses ensure your finance team only reviews what truly matters. Custom rule sets tailored to your DNA.
+        <p className="opacity-80 font-medium mb-8">
+          Automatic flags for out-of-policy expenses ensure your finance team only reviews what truly matters.
         </p>
-        <div className="mt-auto p-4 bg-white/10 rounded-xl border border-white/5 backdrop-blur-sm">
-          <div className="flex items-center gap-3 text-sm font-medium">
-            <AlertTriangle className="w-5 h-5 text-error-container" />
-            Duplicate Receipt Detected
-          </div>
+        <div className="mt-auto p-4 bg-white/10 rounded-xl border border-white/10 text-sm font-bold flex items-center gap-3">
+          <AlertTriangle className="w-5 h-5 text-yellow-300" />
+          Violation Alert
         </div>
       </Card>
 
-      {/* Instant Payouts */}
-      <Card variant="white" className="md:col-span-3 flex flex-col md:flex-row items-center gap-12">
+      <Card variant="white" className="md:col-span-3 flex flex-col md:flex-row items-center gap-12 p-10 md:p-12 shadow-md">
         <div className="flex-1">
-          <div className="w-12 h-12 rounded-xl bg-tertiary-container text-white flex items-center justify-center mb-6">
+          <div className="w-12 h-12 rounded-xl bg-primary text-white flex items-center justify-center mb-6">
             <Zap className="w-6 h-6" />
           </div>
           <h3 className="font-headline text-3xl font-bold text-primary mb-4">Instant Payouts</h3>
-          <p className="text-on-surface-variant text-lg leading-relaxed">
-            Sync directly with your payroll and reimburse employees in seconds, not weeks. Support for 40+ currencies and global bank integrations.
+          <p className="text-on-surface-variant font-medium opacity-70 leading-relaxed">
+            Sync directly with your payroll and reimburse employees in seconds, not weeks. Support for 40+ currencies.
           </p>
-          <ul className="mt-6 space-y-3">
-            <li className="flex items-center gap-2 text-primary font-medium">
-              <CheckCircle className="w-5 h-5 text-secondary" />
-              Direct ERP Synchronization
-            </li>
-            <li className="flex items-center gap-2 text-primary font-medium">
-              <CheckCircle className="w-5 h-5 text-secondary" />
-              Real-time Ledger Updates
-            </li>
-          </ul>
         </div>
         <div className="flex-1 w-full grid grid-cols-2 gap-4">
-          <div className="bg-surface-container rounded-xl p-6 text-center">
-            <div className="text-3xl font-bold text-secondary font-headline">2.4s</div>
-            <div className="text-xs font-body uppercase text-on-surface-variant/60 mt-1">Avg Approval Time</div>
+          <div className="bg-gray-50 rounded-2xl p-6 text-center border border-gray-100">
+            <div className="text-3xl font-bold text-primary font-headline">2.4s</div>
+            <div className="text-xs font-bold uppercase tracking-widest text-on-surface-variant/40 mt-1">Avg Approval</div>
           </div>
-          <div className="bg-surface-container-high rounded-xl p-6 text-center">
+          <div className="bg-gray-50 rounded-2xl p-6 text-center border border-gray-100">
             <div className="text-3xl font-bold text-primary font-headline">98%</div>
-            <div className="text-xs font-body uppercase text-on-surface-variant/60 mt-1">Admin Reduction</div>
+            <div className="text-xs font-bold uppercase tracking-widest text-on-surface-variant/40 mt-1">Efficiency</div>
           </div>
-          <div className="bg-primary text-white col-span-2 rounded-xl p-6 flex items-center justify-between">
-            <div>
-              <div className="text-lg font-bold">Payroll Integration</div>
-              <div className="text-sm opacity-70">Active & Syncing</div>
-            </div>
-            <RefreshCw className="w-8 h-8 text-secondary-container" />
+          <div className="bg-primary text-white col-span-2 rounded-2xl p-6 flex items-center justify-between shadow-xl">
+            <div className="font-bold">ERP Synced</div>
+            <RefreshCw className="w-6 h-6 opacity-60" />
           </div>
         </div>
       </Card>
@@ -171,28 +146,17 @@ export const Features = () => (
 );
 
 export const Testimonial = () => (
-  <section className="py-24 bg-primary overflow-hidden relative">
-    <div className="absolute inset-0 opacity-10">
-      <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_center,var(--tw-gradient-stops))] from-white/20 via-transparent to-transparent"></div>
-    </div>
-    <div className="max-w-4xl mx-auto px-8 text-center relative z-10">
-      <Quote className="w-16 h-16 text-white/20 mx-auto mb-8" />
-      <blockquote className="font-headline text-2xl md:text-3xl font-medium text-white leading-snug mb-10 italic">
-        "Stratos Ledger didn't just automate our expenses; they transformed our entire financial culture. What used to take our finance team 20 hours a week now takes less than 30 minutes of oversight."
+  <section className="py-24 bg-primary px-8 text-center text-white">
+    <div className="max-w-4xl mx-auto">
+      <Quote className="w-12 h-12 text-white/20 mx-auto mb-8" />
+      <blockquote className="font-headline text-2xl md:text-3xl font-semibold mb-10 leading-snug">
+        "Stratos Ledger didn't just automate our expenses; they transformed our entire financial culture."
       </blockquote>
       <div className="flex flex-col items-center">
-        <div className="w-16 h-16 rounded-full overflow-hidden mb-4 border-2 border-secondary">
-          <img 
-            className="w-full h-full object-cover" 
-            src="https://picsum.photos/seed/person/200/200" 
-            alt="Sarah Jenkins"
-            referrerPolicy="no-referrer"
-          />
+        <div className="w-16 h-16 rounded-full overflow-hidden mb-4 border-2 border-white/20">
+          <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=200" alt="Sarah" referrerPolicy="no-referrer" />
         </div>
-        <cite className="not-italic">
-          <span className="block text-white font-bold text-lg">Sarah Jenkins</span>
-          <span className="text-secondary-container font-body text-sm uppercase tracking-widest">CFO, TechScale Systems</span>
-        </cite>
+        <cite className="not-italic text-sm font-bold uppercase tracking-widest opacity-80">Sarah Jenkins, CFO</cite>
       </div>
     </div>
   </section>
@@ -200,38 +164,30 @@ export const Testimonial = () => (
 
 export const CTA = () => (
   <section className="py-24 px-8 max-w-5xl mx-auto text-center">
-    <Card variant="highest" className="p-12 md:p-20 relative overflow-hidden">
-      <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
-        <Zap className="w-64 h-64" />
-      </div>
-      <h2 className="font-headline text-3xl md:text-5xl font-extrabold text-primary mb-8 relative z-10">Ready to streamline your finance operations?</h2>
-      <p className="text-on-surface-variant text-lg mb-12 max-w-2xl mx-auto relative z-10">Join 5,000+ companies who have traded manual spreadsheets for precision automation.</p>
-      <div className="flex flex-col sm:flex-row justify-center gap-4 relative z-10">
-        <Button className="px-10 py-5 text-lg">Get Started Free</Button>
-        <Button variant="secondary" className="px-10 py-5 text-lg">Schedule Consultation</Button>
+    <Card variant="highest" className="p-12 md:p-20 bg-primary rounded-[40px] text-white overflow-hidden shadow-2xl" hover={false}>
+      <h2 className="font-headline text-3xl md:text-5xl font-bold mb-8">Ready to streamline?</h2>
+      <p className="opacity-80 text-lg mb-12 max-w-lg mx-auto leading-relaxed">Join 5,000+ companies who have traded manual spreadsheets for precision automation.</p>
+      <div className="flex flex-col sm:flex-row justify-center gap-4">
+        <Button className="px-10 py-4 text-lg bg-white text-primary border-none shadow-xl hover:bg-gray-100">Get Started Free</Button>
+        <Button variant="outline" className="px-10 py-4 text-lg text-white border-white/30 truncate">Contact Sales</Button>
       </div>
     </Card>
   </section>
 );
 
 export const Footer = () => (
-  <footer className="bg-surface-container-low w-full pt-16 pb-8">
-    <div className="flex flex-col md:flex-row justify-between items-center w-full px-8 max-w-7xl mx-auto border-t border-outline-variant pt-8">
-      <div className="mb-8 md:mb-0 text-center md:text-left">
-        <div className="text-lg font-bold text-primary font-headline mb-2">Stratos Ledger</div>
-        <p className="text-on-surface-variant text-sm max-w-xs font-body">
-          Precision in every transaction. The vault for your company's growth.
-        </p>
+  <footer className="bg-white border-t border-gray-100 py-16">
+    <div className="max-w-7xl mx-auto px-8 flex flex-col md:flex-row justify-between items-center gap-8">
+      <div>
+        <div className="text-xl font-bold text-primary font-headline mb-2">Stratos Ledger</div>
+        <p className="text-on-surface-variant text-sm font-medium opacity-60">Precision in every transaction.</p>
       </div>
-      <div className="flex flex-wrap justify-center gap-8 mb-8 md:mb-0">
-        <a className="text-on-surface-variant hover:text-primary transition-colors font-body text-sm" href="#">Privacy Policy</a>
-        <a className="text-on-surface-variant hover:text-primary transition-colors font-body text-sm" href="#">Terms of Service</a>
-        <a className="text-on-surface-variant hover:text-primary transition-colors font-body text-sm" href="#">Security</a>
-        <a className="text-on-surface-variant hover:text-primary transition-colors font-body text-sm" href="#">Status</a>
+      <div className="flex gap-8 text-sm font-bold text-on-surface-variant/60 uppercase tracking-widest">
+        <span>Privacy</span>
+        <span>Terms</span>
+        <span>Status</span>
       </div>
-      <div className="text-on-surface-variant/60 text-xs font-body text-center md:text-right">
-        © 2024 Stratos Ledger. All rights reserved. Precision in every transaction.
-      </div>
+      <div className="text-on-surface-variant/40 text-xs font-bold uppercase tracking-widest">© 2024 Stratos Ledger</div>
     </div>
   </footer>
 );
