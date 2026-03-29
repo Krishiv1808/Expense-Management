@@ -1,66 +1,172 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { motion } from 'framer-motion';
+import { ArrowLeft, User, Mail, Lock, Building, Globe, Loader2 } from 'lucide-react';
 import { Button } from '../components/Button';
 import { Card } from '../components/UI';
 
 export default function Signup() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    name: '', email: '', password: '', companyName: '', country: ''
+    name: '',
+    email: '',
+    password: '',
+    companyName: '',
+    country: ''
   });
+  const [countries, setCountries] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [fetchingCountries, setFetchingCountries] = useState(true);
   const [error, setError] = useState('');
 
-  const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
+  useEffect(() => {
+    const fetchCountries = async () => {
+      try {
+        const res = await axios.get('http://localhost:5000/api/auth/countries');
+        setCountries(res.data);
+      } catch (err) {
+        console.error('Error fetching countries:', err);
+      } finally {
+        setFetchingCountries(false);
+      }
+    };
+    fetchCountries();
+  }, []);
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setError('');
     try {
       const res = await axios.post('http://localhost:5000/api/auth/register', formData);
       localStorage.setItem('token', res.data.token);
       localStorage.setItem('user', JSON.stringify(res.data.user));
       navigate('/admin-dashboard');
     } catch (err) {
-      setError(err.response?.data?.message || 'Error creating company');
+      setError(err.response?.data?.message || 'Registration failed');
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-surface px-4 py-20">
-      <Card variant="high" className="w-full max-w-md p-8 shadow-2xl rounded-3xl bg-white text-on-surface">
-        <h2 className="text-3xl font-headline font-bold text-primary mb-2">Register Company</h2>
-        <p className="text-on-surface-variant font-medium mb-6">Create your Admin account to get started.</p>
-        
-        {error && <div className="p-3 mb-4 bg-red-50 text-red-600 rounded-lg text-sm">{error}</div>}
-        
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4 max-h-[60vh] overflow-y-auto w-full no-scrollbar pb-2">
-          <div>
-            <label className="block text-sm font-semibold mb-1 text-on-surface">Admin Name</label>
-            <input name="name" onChange={handleChange} className="w-full p-2.5 rounded-xl border border-outline focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all" required />
-          </div>
-          <div>
-            <label className="block text-sm font-semibold mb-1 text-on-surface">Email</label>
-            <input type="email" name="email" onChange={handleChange} className="w-full p-2.5 rounded-xl border border-outline focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all" required />
-          </div>
-          <div>
-            <label className="block text-sm font-semibold mb-1 text-on-surface">Password</label>
-            <input type="password" name="password" onChange={handleChange} className="w-full p-2.5 rounded-xl border border-outline focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all" required />
-          </div>
-          <div>
-            <label className="block text-sm font-semibold mb-1 text-on-surface">Company Name</label>
-            <input name="companyName" onChange={handleChange} className="w-full p-2.5 rounded-xl border border-outline focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all" required />
-          </div>
-          <div>
-            <label className="block text-sm font-semibold mb-1 text-on-surface">Country (Code)</label>
-            <input name="country" placeholder="e.g. US, IN, UK" onChange={handleChange} className="w-full p-2.5 rounded-xl border border-outline focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all" required />
-          </div>
-          <Button type="submit" className="w-full mt-4 py-3">Sign Up</Button>
-        </form>
-        <p className="text-center mt-6 text-sm text-on-surface-variant">
-          Already have an account? <span onClick={() => navigate('/login')} className="text-primary font-bold cursor-pointer hover:underline">Log in</span>
-        </p>
-      </Card>
+    <div className="min-h-screen flex items-center justify-center p-6 bg-surface">
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="w-full max-w-md my-10"
+      >
+        <div className="text-center mb-8">
+          <h2 className="text-3xl font-black text-primary font-headline">Join Stratos Ledger</h2>
+          <p className="text-on-surface-variant font-medium mt-2">Setup your company in seconds</p>
+        </div>
+
+        <Card variant="white" className="p-8 shadow-xl" hover={false}>
+          <form onSubmit={handleSubmit} className="space-y-5">
+            {error && (
+              <div className="p-3 bg-error-container text-error text-sm font-bold rounded-xl text-center">
+                {error}
+              </div>
+            )}
+            
+            <div className="space-y-1">
+              <label className="text-xs font-bold uppercase tracking-widest text-on-surface-variant/60 ml-1">Full Name</label>
+              <div className="relative">
+                <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant/40" />
+                <input 
+                  type="text" 
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  placeholder="John Doe" 
+                  className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-medium"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="space-y-1">
+              <label className="text-xs font-bold uppercase tracking-widest text-on-surface-variant/60 ml-1">Email Address</label>
+              <div className="relative">
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant/40" />
+                <input 
+                  type="email" 
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  placeholder="john@company.com" 
+                  className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-medium"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="space-y-1">
+              <label className="text-xs font-bold uppercase tracking-widest text-on-surface-variant/60 ml-1">Password</label>
+              <div className="relative">
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant/40" />
+                <input 
+                  type="password" 
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  placeholder="••••••••" 
+                  className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-medium"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="space-y-1">
+              <label className="text-xs font-bold uppercase tracking-widest text-on-surface-variant/60 ml-1">Company Name</label>
+              <div className="relative">
+                <Building className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant/40" />
+                <input 
+                  type="text" 
+                  name="companyName"
+                  value={formData.companyName}
+                  onChange={handleChange}
+                  placeholder="TechScale Systems" 
+                  className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-medium"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="space-y-1">
+              <label className="text-xs font-bold uppercase tracking-widest text-on-surface-variant/60 ml-1">Country</label>
+              <div className="relative">
+                <Globe className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-on-surface-variant/40" />
+                <select 
+                  name="country"
+                  value={formData.country}
+                  onChange={handleChange}
+                  className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none appearance-none transition-all font-medium"
+                  required
+                >
+                  <option value="">{fetchingCountries ? 'Loading countries...' : 'Select Country'}</option>
+                  {countries.map(c => (
+                    <option key={c.code} value={c.name}>{c.name}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <Button className="w-full py-4 mt-4" type="submit">
+              {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Create Account'}
+            </Button>
+          </form>
+
+          <p className="text-center text-sm font-medium mt-6 text-on-surface-variant/60">
+            Already have an account? <Link to="/login" className="text-primary font-bold hover:underline">Log in</Link>
+          </p>
+        </Card>
+      </motion.div>
     </div>
   );
 }

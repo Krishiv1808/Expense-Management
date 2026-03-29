@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { ArrowRight, Brain, ShieldCheck, Zap, CheckCircle, RefreshCw, Quote, AlertTriangle } from 'lucide-react';
 import { Button } from './Button';
 import { Badge, Card } from './UI';
@@ -11,25 +11,26 @@ const simpleFadeIn = {
   transition: { duration: 0.4 }
 };
 
-export const Navbar = () => {
-  const navigate = useNavigate();
-  return (
-    <nav className="fixed top-0 w-full z-50 bg-white shadow-sm border-b border-gray-100">
-      <div className="flex justify-between items-center w-full px-8 py-4 max-w-7xl mx-auto">
-        <div className="text-xl font-bold tracking-tighter text-primary font-headline">Stratos Ledger</div>
-        <div className="hidden md:flex items-center gap-8">
-          {['Product', 'Solutions', 'Pricing', 'Contact'].map((item) => (
-            <a key={item} className="text-on-surface-variant hover:text-primary transition-all font-semibold font-body text-sm" href="#">{item}</a>
-          ))}
-        </div>
-        <div className="flex items-center gap-3">
-          <Button variant="ghost" onClick={() => navigate('/login')}>Login</Button>
-          <Button onClick={() => navigate('/signup')}>Get Started</Button>
-        </div>
+export const Navbar = () => (
+  <nav className="fixed top-0 w-full z-50 bg-white shadow-sm border-b border-gray-100">
+    <div className="flex justify-between items-center w-full px-8 py-4 max-w-7xl mx-auto">
+      <Link to="/" className="text-xl font-bold tracking-tighter text-primary font-headline">Stratos Ledger</Link>
+      <div className="hidden md:flex items-center gap-8">
+        {['Product', 'Solutions', 'Pricing', 'Contact'].map((item) => (
+          <a key={item} className="text-on-surface-variant hover:text-primary transition-all font-semibold font-body text-sm" href="#">{item}</a>
+        ))}
       </div>
-    </nav>
-  );
-};
+      <div className="flex items-center gap-3">
+        <Link to="/login">
+            <Button variant="ghost">Login</Button>
+        </Link>
+        <Link to="/signup">
+            <Button>Get Started</Button>
+        </Link>
+      </div>
+    </div>
+  </nav>
+);
 
 export const Hero = () => (
   <section className="px-8 pt-32 pb-20 md:pt-48 md:pb-32 max-w-7xl mx-auto flex flex-col items-center text-center">
@@ -43,7 +44,9 @@ export const Hero = () => (
       </p>
       
       <div className="flex flex-col sm:flex-row gap-4 items-center justify-center">
-        <Button onClick={() => window.location.href='/signup'} className="px-10 py-4 text-lg">Get Started Free</Button>
+        <Link to="/signup">
+            <Button className="px-10 py-4 text-lg">Get Started Free</Button>
+        </Link>
         <Button variant="ghost" className="px-10 py-4 text-lg group font-bold">
           Book a Demo
           <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -172,7 +175,9 @@ export const CTA = () => (
       <h2 className="font-headline text-3xl md:text-5xl font-bold mb-8">Ready to streamline?</h2>
       <p className="opacity-80 text-lg mb-12 max-w-lg mx-auto leading-relaxed">Join 5,000+ companies who have traded manual spreadsheets for precision automation.</p>
       <div className="flex flex-col sm:flex-row justify-center gap-4">
-        <Button onClick={() => window.location.href='/signup'} className="px-10 py-4 text-lg bg-white text-primary border-none shadow-xl hover:bg-gray-100">Get Started Free</Button>
+        <Link to="/signup">
+            <Button className="px-10 py-4 text-lg bg-white text-primary border-none shadow-xl hover:bg-gray-100">Get Started Free</Button>
+        </Link>
         <Button variant="outline" className="px-10 py-4 text-lg text-white border-white/30 truncate">Contact Sales</Button>
       </div>
     </Card>
