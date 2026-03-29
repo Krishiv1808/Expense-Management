@@ -159,10 +159,10 @@ export default function EmployeeDashboard() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 gap-8">
         
-        {/* Left Column (Requires Attention & Recent Claims) */}
-        <div className="xl:col-span-2 space-y-8">
+        {/* Full Width (Recent Claims) */}
+        <div className="space-y-8">
           
           {/* Recent Claims Table */}
           <div className="space-y-4">
@@ -220,81 +220,6 @@ export default function EmployeeDashboard() {
               </div>
             </div>
           </div>
-        </div>
-
-        {/* Right Column (Widgets) */}
-        <div className="space-y-6">
-          
-          {/* Vault Quick Tip */}
-          <div className="bg-[#003345] p-8 rounded-3xl relative overflow-hidden flex flex-col justify-center">
-            <h3 className="text-lg font-headline font-bold text-white mb-3 relative z-10">Vault Quick Tip</h3>
-            <p className="text-sm font-medium text-white/70 leading-relaxed mb-6 relative z-10">
-              Did you know? Meals under $25 no longer require physical receipt scanning if paid with your corporate card.
-            </p>
-            <button className="text-white text-xs font-black tracking-widest uppercase flex items-center gap-2 hover:opacity-80 transition-opacity w-fit relative z-10">
-              Read Policy <ArrowRight className="w-4 h-4" />
-            </button>
-            <HelpCircle className="w-40 h-40 absolute -right-10 -bottom-10 text-white/5" strokeWidth={1} />
-          </div>
-
-          {/* Approval Pipeline */}
-          <div className="bg-white p-6 rounded-3xl border border-[#003345]/5 shadow-sm">
-             <h3 className="text-sm font-bold text-[#003345] mb-6">Approval Pipeline</h3>
-             
-             <div className="space-y-5 relative">
-               <div className="absolute left-[3px] top-6 bottom-6 w-px bg-gray-100"></div>
-               
-               {/* Step 1 */}
-               <div className="relative z-10">
-                 <div className="flex justify-between items-center mb-2">
-                    <span className="text-sm font-bold text-[#003345] bg-white pr-2">Manager Review</span>
-                    <span className="text-xs font-black text-[#003345]">85%</span>
-                 </div>
-                 <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
-                    <div className="h-full bg-[#003345] rounded-full" style={{ width: '85%' }}></div>
-                 </div>
-               </div>
-
-               {/* Step 2 */}
-               <div className="relative z-10">
-                 <div className="flex justify-between items-center mb-2">
-                    <span className="text-sm font-bold text-[#40484c] bg-white pr-2">Finance Audit</span>
-                    <span className="text-xs font-black text-[#40484c]">40%</span>
-                 </div>
-                 <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
-                    <div className="h-full bg-[#14696d] rounded-full" style={{ width: '40%' }}></div>
-                 </div>
-               </div>
-
-               {/* Step 3 */}
-               <div className="relative z-10">
-                 <div className="flex justify-between items-center mb-2">
-                    <span className="text-sm font-bold text-[#40484c]/60 bg-white pr-2">Bank Transfer</span>
-                    <span className="text-xs font-black text-[#40484c]/60">15%</span>
-                 </div>
-                 <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
-                    <div className="h-full bg-gray-300 rounded-full" style={{ width: '15%' }}></div>
-                 </div>
-               </div>
-             </div>
-          </div>
-
-          {/* Support Widget */}
-          <div className="bg-white p-6 rounded-3xl border border-[#003345]/5 shadow-sm flex flex-col items-center">
-             <div className="flex items-center gap-4 w-full mb-4">
-                <div className="w-12 h-12 bg-[#e6f6ff] rounded-full flex items-center justify-center text-[#003345] font-bold shadow-sm">
-                   SM
-                </div>
-                <div>
-                   <p className="text-[10px] font-black tracking-widest uppercase text-[#40484c]/60 mb-0.5">Claims Specialist</p>
-                   <p className="text-sm font-bold text-[#003345]">Sarah Miller</p>
-                </div>
-             </div>
-             <button className="w-full py-3 bg-[#f3faff] text-[#003345] hover:bg-[#e6f6ff] rounded-xl font-bold text-sm transition-colors border border-[#003345]/10">
-               Message Support
-             </button>
-          </div>
-
         </div>
       </div>
 

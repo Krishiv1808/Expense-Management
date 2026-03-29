@@ -32,6 +32,8 @@ export default function Login() {
       
       if (res.data.user.role === 'ADMIN') {
         navigate('/admin-dashboard');
+      } else if (['MANAGER', 'FINANCE', 'DIRECTOR'].includes(res.data.user.role)) {
+        navigate('/approver-dashboard');
       } else {
         navigate('/user-dashboard');
       }

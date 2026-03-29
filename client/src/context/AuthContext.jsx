@@ -1,4 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react';
+import axios from 'axios';
 
 export const AuthContext = createContext(null);
 
@@ -22,7 +23,28 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem('user');
       }
     }
+    const interceptor = axios.interceptors.response.use(
+      (response) => response,
+      (error) => {
+        if (error.response && error.response.status === 401) {
+          // Hard clear local storage and force redirect to login
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          setToken(null);
+          setUser(null);
+          if (window.location.pathname !== '/login') {
+             window.location.href = '/login';
+          }
+        }
+        return Promise.reject(error);
+      }
+    );
+
     setLoading(false);
+
+    return () => {
+      axios.interceptors.response.eject(interceptor);
+    };
   }, []);
 
   const login = (newToken, newUser) => {

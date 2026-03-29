@@ -264,6 +264,8 @@ export default function AdminDashboard() {
                         <span className={`text-sm font-bold ${u.role === 'FINANCE' || u.role === 'ADMIN' ? 'text-[#003345]' : 'text-[#40484c]/80'}`}>
                           {u.role === 'EMPLOYEE' ? 'Employee' : 
                            u.role === 'FINANCE' ? 'Finance Officer' : 
+                           u.role === 'MANAGER' ? 'Manager' :
+                           u.role === 'DIRECTOR' ? 'Director' :
                            u.role === 'ADMIN' ? 'System Admin' : u.role}
                         </span>
                       </div>
@@ -325,36 +327,6 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* Bottom Section */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        
-        {/* Role-Based Access Protocol */}
-        <div className="lg:col-span-2 bg-[#d5ecf8] p-8 rounded-3xl relative overflow-hidden flex items-start gap-6 border border-[#003345]/5">
-          <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center shadow-sm shrink-0">
-            <ShieldAlert className="w-8 h-8 text-[#003345]" />
-          </div>
-          <div className="relative z-10 text-left">
-            <h3 className="text-xl font-headline font-black text-[#003345] mb-2">Role-Based Access Protocol</h3>
-            <p className="text-[#40484c] text-sm leading-relaxed mb-4 max-w-xl font-medium">
-              Finance Officers have full read/write access to Ledger systems. Ensure all new officers complete the mandatory Security Clearance module before provisioning primary ledger access keys.
-            </p>
-            <button className="text-[#003345] font-bold text-sm flex items-center gap-2 hover:opacity-80 transition-opacity">
-              Review Security Protocol <ChevronRight className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
-
-        {/* Last Audit */}
-        <div className="bg-white p-8 rounded-3xl border border-[#003345]/10 shadow-sm flex flex-col items-center justify-center text-center">
-          <p className="text-xs font-black tracking-widest text-[#40484c]/60 uppercase mb-2">Last Audit</p>
-          <h3 className="text-4xl font-headline font-black text-[#003345] mb-4">14h ago</h3>
-          <div className="flex -space-x-3">
-             <div className="w-10 h-10 rounded-full border-2 border-white bg-[#003345] text-white flex items-center justify-center font-bold text-sm z-30 shadow-sm">MB</div>
-             <div className="w-10 h-10 rounded-full border-2 border-white bg-[#14696d] text-white flex items-center justify-center font-bold text-sm z-20 shadow-sm">AK</div>
-             <div className="w-10 h-10 rounded-full border-2 border-white bg-[#cfe6f2] text-[#003345] flex items-center justify-center font-bold text-xs z-10 shadow-sm">+2</div>
-          </div>
-        </div>
-      </div>
 
       <footer className="pt-8 pb-4 flex flex-col sm:flex-row items-center justify-between border-t border-gray-200 mt-8 text-xs font-bold text-[#40484c]/60">
          <p>© 2024 Stratos Ledger. Precision Vault Enterprise Edition v2.4.2</p>

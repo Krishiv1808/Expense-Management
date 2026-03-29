@@ -266,37 +266,6 @@ export default function FinanceDashboard() {
         </div>
       </div>
 
-      {/* Bottom Widgets */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 pb-8">
-         <div className="bg-[#d5ecf8] p-8 rounded-3xl border border-[#003345]/5 flex items-center gap-6 shadow-sm">
-            <div className="w-16 h-16 bg-[#cfe6f2] rounded-2xl flex items-center justify-center">
-               <Activity className="w-8 h-8 text-[#003345]" />
-            </div>
-            <div>
-               <h3 className="text-xl font-headline font-black text-[#003345] mb-1">Departmental Burn</h3>
-               <p className="text-sm font-medium text-[#40484c] max-w-[250px]">
-                 Compare spend rates across departments to optimize upcoming budgets.
-               </p>
-            </div>
-         </div>
-         
-         <div className="bg-white p-8 rounded-3xl border border-[#003345]/5 shadow-sm flex items-center justify-between">
-            <div>
-               <h3 className="text-xl font-headline font-black text-[#003345] mb-1">Quick Audit Tool</h3>
-               <p className="text-sm font-medium text-[#40484c] mb-4">Run heuristics to find anomalies.</p>
-               <div className="flex flex-col gap-2">
-                 <div className="flex justify-between items-center bg-gray-50 px-4 py-2 rounded-xl text-sm font-bold min-w-[280px]">
-                    <span className="text-[#40484c]">Duplicate Receipts</span>
-                    <span className="text-red-500">2 Detected</span>
-                 </div>
-               </div>
-            </div>
-            <div className="hidden sm:flex w-24 h-24 bg-[#003345] rounded-3xl items-center justify-center overflow-hidden relative">
-                <HelpCircle className="w-16 h-16 text-white/10 absolute -right-4 -bottom-4" />
-                <span className="text-white font-black text-2xl relative z-10">AI</span>
-            </div>
-         </div>
-      </div>
 
     </div>
   );

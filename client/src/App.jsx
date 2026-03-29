@@ -7,7 +7,8 @@ import PublicRoute from './components/PublicRoute';
 import Signup from './pages/Signup';
 import Login from './pages/Login';
 import AdminDashboard from './pages/AdminDashboard';
-import FinanceDashboard from './pages/FinanceDashboard';
+import ApproverDashboard from './pages/ApproverDashboard';
+import ApprovedClaims from './pages/ApprovedClaims';
 import EmployeeDashboard from './pages/EmployeeDashboard';
 import AppLayout from './components/AppLayout';
 import ChangePassword from './components/ChangePassword';
@@ -53,7 +54,7 @@ export default function App() {
           
           {/* Default redirect for /admin-dashboard */}
           <Route path="/admin-dashboard" element={<Navigate to="/admin-dashboard/users" replace />} />
-          <Route path="/finance-dashboard" element={<Navigate to="/finance-dashboard/overview" replace />} />
+          <Route path="/approver-dashboard" element={<Navigate to="/approver-dashboard/overview" replace />} />
           <Route path="/user-dashboard" element={<Navigate to="/user-dashboard/overview" replace />} />
 
           {/* Protected Admin Routes with Layout */}
@@ -67,6 +68,7 @@ export default function App() {
           >
             <Route path="overview" element={<DummyView title="Admin Overview" />} />
             <Route path="claims" element={<DummyView title="Claims Management" />} />
+            <Route path="approved" element={<ApprovedClaims />} />
             <Route path="team" element={<DummyView title="Team Organization" />} />
             <Route path="users" element={<AdminDashboard />} />
             <Route path="settings" element={
@@ -78,21 +80,22 @@ export default function App() {
             } />
           </Route>
 
-          {/* Protected Finance Routes */}
+          {/* Universal Approver Routes (Manager, Finance, Director) */}
           <Route 
-            path="/finance-dashboard/*" 
+            path="/approver-dashboard/*" 
             element={
-              <ProtectedRoute role="FINANCE">
+              <ProtectedRoute role={['MANAGER', 'FINANCE', 'DIRECTOR']}>
                 <AppLayout />
               </ProtectedRoute>
             }
           >
-            <Route path="overview" element={<FinanceDashboard />} />
-            <Route path="claims" element={<DummyView title="Claims Pipeline" />} />
-            <Route path="team" element={<DummyView title="Finance Team" />} />
-            <Route path="users" element={<DummyView title="Users (Finance View)" />} />
+            <Route path="overview" element={<ApproverDashboard />} />
+            <Route path="approved" element={<ApprovedClaims />} />
+            <Route path="claims" element={<DummyView title="Approval Pipeline" />} />
+            <Route path="team" element={<DummyView title="Team Overview" />} />
+            <Route path="users" element={<DummyView title="Users" />} />
             <Route path="settings" element={
-              <DummyView title="Finance Settings">
+              <DummyView title="Settings">
                  <div className="text-left mt-8 w-full max-w-md mx-auto">
                     <ChangePassword />
                  </div>
@@ -110,7 +113,7 @@ export default function App() {
             }
           >
             <Route path="overview" element={<EmployeeDashboard />} />
-            <Route path="claims" element={<DummyView title="My Past Claims" />} />
+            <Route path="claims" element={<EmployeeDashboard />} />
             <Route path="team" element={<DummyView title="My Team" />} />
             <Route path="users" element={<Navigate to="/user-dashboard/overview" replace />} />
             <Route path="settings" element={

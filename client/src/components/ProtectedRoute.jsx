@@ -19,12 +19,15 @@ export default function ProtectedRoute({ role, children }) {
   }
 
   // Not authorized (wrong role)
-  if (role && user.role !== role) {
-    // Redirect to their respective dashboard instead of a generic unauthorized page
-    if (user.role === 'ADMIN') {
-      return <Navigate to="/admin-dashboard" replace />;
-    } else {
-      return <Navigate to="/user-dashboard" replace />;
+  if (role) {
+    const roles = Array.isArray(role) ? role : [role];
+    if (!roles.includes(user.role)) {
+      // Redirect to their respective dashboard instead of a generic unauthorized page
+      if (user.role === 'ADMIN') {
+        return <Navigate to="/admin-dashboard" replace />;
+      } else {
+        return <Navigate to="/user-dashboard" replace />;
+      }
     }
   }
 

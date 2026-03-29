@@ -15,7 +15,7 @@ export default function AppLayout() {
 
   const getBasePath = () => {
     if (user?.role === 'ADMIN') return '/admin-dashboard';
-    if (user?.role === 'FINANCE') return '/finance-dashboard';
+    if (['MANAGER', 'FINANCE', 'DIRECTOR'].includes(user?.role)) return '/approver-dashboard';
     return '/user-dashboard'; // Default employee
   };
 
@@ -23,9 +23,17 @@ export default function AppLayout() {
 
   const navItems = [
     { name: 'Dashboard', path: `${basePath}/overview`, icon: LayoutDashboard },
-    { name: 'Claims', path: `${basePath}/claims`, icon: FileText },
-    { name: 'Team', path: `${basePath}/team`, icon: Users },
-    { name: 'Users', path: `${basePath}/users`, icon: Shield },
+    ...(['MANAGER', 'FINANCE', 'DIRECTOR'].includes(user?.role) ? [
+      { name: 'Approved Claims', path: `${basePath}/approved`, icon: CheckCircle },
+      { name: 'My Expenses', path: `/user-dashboard/overview`, icon: FileText }
+    ] : [
+      { name: 'Claims', path: `${basePath}/claims`, icon: FileText }
+    ]),
+    ...(user?.role === 'ADMIN' ? [
+      { name: 'Approved Claims', path: `${basePath}/approved`, icon: CheckCircle },
+      { name: 'Team', path: `${basePath}/team`, icon: Users },
+      { name: 'Users', path: `${basePath}/users`, icon: Shield }
+    ] : []),
     { name: 'Settings', path: `${basePath}/settings`, icon: Settings },
   ];
 
@@ -70,10 +78,6 @@ export default function AppLayout() {
         </div>
 
         <div className="p-4 border-t border-[#003345]/5">
-          <button className="w-full flex items-center justify-center gap-2 bg-[#003345] text-white py-3 rounded-xl font-bold text-sm mb-4 hover:bg-[#004b63] transition-colors shadow-sm">
-            <span className="text-xl leading-none -mt-1">+</span> New Claim
-          </button>
-          
           <button className="flex items-center gap-3 px-4 py-2 text-sm font-bold text-[#40484c]/70 hover:text-[#003345] w-full text-left">
             <CheckCircle className="w-4 h-4" />
             Support
@@ -91,28 +95,19 @@ export default function AppLayout() {
         {/* Top Navbar */}
         <header className="h-16 bg-white/50 backdrop-blur-md border-b border-[#003345]/5 sticky top-0 z-10 px-8 flex items-center justify-between">
           <div className="flex-1 max-w-xl relative hidden md:block">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#40484c]/40" />
-            <input 
-              type="text" 
-              placeholder="Search claims or documents..." 
-              className="w-full bg-[#003345]/5 border-none rounded-full py-2 pl-10 pr-4 text-sm font-medium focus:ring-2 focus:ring-[#003345]/20 outline-none"
-            />
-          </div>
-
-          <div className="flex items-center gap-8 text-sm font-bold text-[#40484c]/70 mx-8 hidden lg:flex">
-            <span className="hover:text-[#003345] cursor-pointer">Overview</span>
-            <span className="hover:text-[#003345] cursor-pointer">Analytics</span>
-            <span className="hover:text-[#003345] cursor-pointer">Reports</span>
+            {user?.role === 'ADMIN' && (
+              <>
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#40484c]/40" />
+                <input 
+                  type="text" 
+                  placeholder="Search users..." 
+                  className="w-full bg-[#003345]/5 border-none rounded-full py-2 pl-10 pr-4 text-sm font-medium focus:ring-2 focus:ring-[#003345]/20 outline-none"
+                />
+              </>
+            )}
           </div>
 
           <div className="flex items-center gap-6">
-            <div className="flex items-center gap-4 text-[#40484c]/70">
-              <Bell className="w-5 h-5 cursor-pointer hover:text-[#003345]" />
-              <History className="w-5 h-5 cursor-pointer hover:text-[#003345]" />
-            </div>
-            
-            <div className="h-8 w-px bg-[#003345]/10"></div>
-            
             <div className="flex items-center gap-3">
               <div className="text-right hidden sm:block">
                 <p className="text-sm font-bold text-[#003345] leading-tight">{user?.name || 'User'}</p>

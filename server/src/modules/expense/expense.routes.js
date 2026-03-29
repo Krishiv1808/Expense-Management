@@ -4,12 +4,12 @@ const expenseController = require('./expense.controller');
 const { verifyToken } = require('../auth/auth.middleware');
 const upload = require('../../middleware/upload');
 
-// Middleware to check if user is FINANCE or ADMIN
-const isFinanceOrAdmin = (req, res, next) => {
-  if (req.user && (req.user.role === 'FINANCE' || req.user.role === 'ADMIN')) {
+// Middleware to check if user is an Approver or Admin
+const isApprover = (req, res, next) => {
+  if (req.user && ['FINANCE', 'ADMIN', 'MANAGER', 'DIRECTOR'].includes(req.user.role)) {
     next();
   } else {
-    res.status(403).json({ message: 'Access Denied: Requires FINANCE or ADMIN role' });
+    res.status(403).json({ message: 'Access Denied: Requires Approver Privileges' });
   }
 };
 
@@ -24,13 +24,18 @@ router.post('/', verifyToken, upload.single('receipt'), expenseController.create
 router.get('/me', verifyToken, expenseController.getMyClaims);
 
 // @route   GET api/expenses/pending
-// @desc    Finance gets all pending claims for the company
-// @access  Private (Finance/Admin only)
-router.get('/pending', verifyToken, isFinanceOrAdmin, expenseController.getPendingClaims);
+// @desc    Approvers get all pending claims for the company
+// @access  Private (Finance/Admin/Manager/Director)
+router.get('/pending', verifyToken, isApprover, expenseController.getPendingClaims);
+
+// @route   GET api/expenses/approved
+// @desc    Approvers get all finalized approved claims for the company
+// @access  Private (Finance/Admin/Manager/Director)
+router.get('/approved', verifyToken, isApprover, expenseController.getApprovedClaims);
 
 // @route   PATCH api/expenses/:id/status
 // @desc    Finance approves or rejects a claim
 // @access  Private (Finance/Admin only)
-router.patch('/:id/status', verifyToken, isFinanceOrAdmin, expenseController.updateClaimStatus);
+router.patch('/:id/status', verifyToken, isApprover, expenseController.updateClaimStatus);
 
 module.exports = router;
