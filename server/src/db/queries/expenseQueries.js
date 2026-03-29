@@ -29,7 +29,7 @@ const expenseQueries = {
 
   updateExpenseStatus: `
     UPDATE expenses
-    SET status = $1
+    SET status = $1, updated_at = NOW()
     WHERE id = $2 AND company_id = $3
     RETURNING *;
   `,

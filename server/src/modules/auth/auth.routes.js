@@ -23,4 +23,16 @@ router.get('/countries', async (req, res) => {
     }
 });
 
+// @route   POST api/auth/forgot-password
+// @desc    Send OTP to user's email for password reset
+router.post('/forgot-password', authController.forgotPassword);
+
+// @route   POST api/auth/verify-reset-otp
+// @desc    Verify the OTP and issue a short-lived reset token
+router.post('/verify-reset-otp', authController.verifyResetOTP);
+
+// @route   POST api/auth/reset-password
+// @desc    Reset password using the reset token
+router.post('/reset-password', authController.resetPassword);
+
 module.exports = router;

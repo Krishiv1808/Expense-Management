@@ -10,6 +10,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import ApproverDashboard from './pages/ApproverDashboard';
 import ApprovedClaims from './pages/ApprovedClaims';
 import EmployeeDashboard from './pages/EmployeeDashboard';
+import EmployeeAcceptedClaims from './pages/EmployeeAcceptedClaims';
 import AppLayout from './components/AppLayout';
 import ChangePassword from './components/ChangePassword';
 
@@ -114,6 +115,7 @@ export default function App() {
           >
             <Route path="overview" element={<EmployeeDashboard />} />
             <Route path="claims" element={<EmployeeDashboard />} />
+            <Route path="accepted" element={<EmployeeAcceptedClaims />} />
             <Route path="team" element={<DummyView title="My Team" />} />
             <Route path="users" element={<Navigate to="/user-dashboard/overview" replace />} />
             <Route path="settings" element={

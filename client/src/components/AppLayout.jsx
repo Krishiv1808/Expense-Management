@@ -30,7 +30,8 @@ export default function AppLayout() {
       { name: 'My Expenses', path: `/user-dashboard/overview`, icon: FileText }
     ] : []),
     ...(!(['ADMIN', 'MANAGER', 'FINANCE', 'DIRECTOR'].includes(user?.role)) ? [
-      { name: 'Claims', path: `${basePath}/claims`, icon: FileText }
+      { name: 'Claims', path: `${basePath}/claims`, icon: FileText },
+      { name: 'Accepted Claims', path: `${basePath}/accepted`, icon: CheckCircle }
     ] : []),
     ...(user?.role === 'ADMIN' ? [
       { name: 'Users', path: `${basePath}/users`, icon: Shield }
