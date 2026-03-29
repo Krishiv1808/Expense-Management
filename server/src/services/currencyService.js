@@ -6,12 +6,14 @@ const currencyService = {
       const response = await axios.get(`https://restcountries.com/v3.1/name/${countryName}?fields=currencies`);
       if (response.data && response.data.length > 0) {
         const currencies = response.data[0].currencies;
-        return Object.keys(currencies)[0]; // Return the first currency code (e.g., 'USD')
+        if (currencies) {
+          return Object.keys(currencies)[0]; // Return the first currency code
+        }
       }
-      return 'USD'; // Default placeholder
+      throw new Error(`No currency found for country: ${countryName}`);
     } catch (err) {
       console.error('Error fetching currency:', err.message);
-      return 'USD'; // Fallback
+      throw new Error(`Failed to determine default currency for ${countryName}. Please check the country name.`);
     }
   },
 
