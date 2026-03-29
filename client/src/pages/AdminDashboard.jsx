@@ -407,7 +407,7 @@ export default function AdminDashboard() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-headline font-black text-[#003345]">User Management</h1>
-          <p className="text-[#40484c]/80 font-medium mt-1">Provision access and manage administrative privileges for Stratos Ledger.</p>
+          <p className="text-[#40484c]/80 font-medium mt-1">Provision access and manage administrative privileges for Fimberse.</p>
         </div>
         <button 
           onClick={() => setIsModalOpen(true)}
@@ -547,7 +547,7 @@ export default function AdminDashboard() {
 
 
       <footer className="pt-8 pb-4 flex flex-col sm:flex-row items-center justify-between border-t border-gray-200 mt-8 text-xs font-bold text-[#40484c]/60">
-         <p>© 2024 Stratos Ledger. Precision Vault Enterprise Edition v2.4.2</p>
+         <p>© 2024 Fimberse. Enterprise Edition v2.4.2</p>
          <div className="flex gap-6 mt-4 sm:mt-0">
            <span className="hover:text-[#003345] cursor-pointer">Privacy Policy</span>
            <span className="hover:text-[#003345] cursor-pointer">Audit Trail</span>

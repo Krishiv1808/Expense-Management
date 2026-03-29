@@ -20,7 +20,7 @@ export const Navbar = () => {
   return (
     <nav className="fixed top-0 w-full z-50 bg-white shadow-sm border-b border-gray-100">
       <div className="flex justify-between items-center w-full px-8 py-4 max-w-7xl mx-auto">
-        <Link to="/" className="text-xl font-bold tracking-tighter text-primary font-headline">Stratos Ledger</Link>
+        <Link to="/" className="text-2xl font-bold tracking-tighter text-primary font-headline">Fimberse</Link>
         <div className="hidden md:flex items-center gap-8">
           {['Product', 'Solutions', 'Pricing', 'Contact'].map((item) => (
             <a key={item} className="text-on-surface-variant hover:text-primary transition-all font-semibold font-body text-sm" href="#">{item}</a>
@@ -175,7 +175,7 @@ export const Testimonial = () => (
     <div className="max-w-4xl mx-auto">
       <Quote className="w-12 h-12 text-white/20 mx-auto mb-8" />
       <blockquote className="font-headline text-2xl md:text-3xl font-semibold mb-10 leading-snug">
-        "Stratos Ledger didn't just automate our expenses; they transformed our entire financial culture."
+        "Fimberse didn't just automate our expenses; they transformed our entire financial culture."
       </blockquote>
       <div className="flex flex-col items-center">
         <div className="w-16 h-16 rounded-full overflow-hidden mb-4 border-2 border-white/20">
@@ -206,7 +206,7 @@ export const Footer = () => (
   <footer className="bg-white border-t border-gray-100 py-16">
     <div className="max-w-7xl mx-auto px-8 flex flex-col md:flex-row justify-between items-center gap-8">
       <div>
-        <div className="text-xl font-bold text-primary font-headline mb-2">Stratos Ledger</div>
+        <div className="text-2xl font-bold text-primary font-headline mb-2">Fimberse</div>
         <p className="text-on-surface-variant text-sm font-medium opacity-60">Precision in every transaction.</p>
       </div>
       <div className="flex gap-8 text-sm font-bold text-on-surface-variant/60 uppercase tracking-widest">
@@ -214,7 +214,7 @@ export const Footer = () => (
         <span>Terms</span>
         <span>Status</span>
       </div>
-      <div className="text-on-surface-variant/40 text-xs font-bold uppercase tracking-widest">© 2024 Stratos Ledger</div>
+      <div className="text-on-surface-variant/40 text-xs font-bold uppercase tracking-widest">© 2024 Fimberse</div>
     </div>
   </footer>
 );

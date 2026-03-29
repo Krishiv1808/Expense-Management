@@ -63,7 +63,7 @@ export default function Signup() {
         className="w-full max-w-md my-10"
       >
         <div className="text-center mb-8">
-          <h2 className="text-3xl font-black text-primary font-headline">Join Stratos Ledger</h2>
+          <h2 className="text-4xl font-black text-primary font-headline">Join Fimberse</h2>
           <p className="text-on-surface-variant font-medium mt-2">Setup your company in seconds</p>
         </div>
 
