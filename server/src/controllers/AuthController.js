@@ -26,6 +26,12 @@ const authController = {
           throw new Error('User already exists');
         }
 
+        // 2b. Check if company already exists
+        const companyCheck = await client.query(userQueries.findCompanyByName, [companyName]);
+        if (companyCheck.rows.length > 0) {
+          throw new Error('Company already exists');
+        }
+
         // 3. Resolve currency for the company
         const defaultCurrency = await currencyService.getCurrencyByCountry(country);
 

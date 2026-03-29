@@ -42,6 +42,12 @@ const userQueries = {
     SET manager_id = $1
     WHERE id = $2
     RETURNING *;
+  `,
+
+  findCompanyByName: `
+    SELECT id, name
+    FROM companies
+    WHERE name = $1;
   `
 };
 
