@@ -50,8 +50,8 @@ export default function AppLayout() {
       <aside className="w-64 bg-white border-r border-[#003345]/10 flex flex-col justify-between hidden md:flex h-screen fixed">
         <div>
           <div className="p-6 border-b border-[#003345]/5">
-            <h1 className="font-headline font-black text-[#003345] text-lg leading-tight">
-              Precision Vault
+            <h1 className="font-headline font-black text-[#003345] text-xl leading-tight">
+              Fimberse
             </h1>
             <p className="text-[10px] font-bold tracking-widest text-[#40484c]/60 uppercase mt-1">
               Enterprise <br /> Reimbursement

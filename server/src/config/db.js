@@ -1,14 +1,16 @@
 const { Pool } = require('pg');
 require('dotenv').config();
 
+const host = process.env.LOCAL_DB_HOST || process.env.CLOUD_DB_HOST;
+
 const pool = new Pool({
-  user: process.env.DB_USER || 'postgres',
-  host: process.env.DB_HOST || 'localhost',
-  database: process.env.DB_NAME || 'expense_mgmt',
-  password: process.env.DB_PASSWORD || 'postgres',
-  port: process.env.DB_PORT || 5432,
+  user: process.env.LOCAL_DB_USER || process.env.CLOUD_DB_USER,
+  host: host,
+  database: process.env.LOCAL_DB_NAME || process.env.CLOUD_DB_NAME,
+  password: process.env.LOCAL_DB_PASSWORD || process.env.CLOUD_DB_PASSWORD,
+  port: process.env.LOCAL_DB_PORT || process.env.CLOUD_DB_PORT,
   // Added SSL support for Cloud DBs (Supabase/Neon)
-  ssl: process.env.DB_HOST !== 'localhost' ? { rejectUnauthorized: false } : false
+  ssl: (host && host !== 'localhost') ? { rejectUnauthorized: false } : false
 });
 
 pool.on('connect', () => {
